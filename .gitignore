@@ -44,3 +44,9 @@ captures/
 
 ### Android Patch ###
 gen-external-apklibs
+
+# Android Studio idea folder
+.idea/
+
+# MAC DS_Store
+.DS_Store

@@ -1,5 +1,6 @@
 package castofo.com.co.nower.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -10,6 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import castofo.com.co.nower.R;
+import castofo.com.co.nower.location.MapActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
 
@@ -53,8 +55,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
   @Override
   public void navigateToMap() {
-    // Intent navigateToMapIntent = new Intent(this, MapActivity.class);
-    // startActivity(navigateToMapIntent);
+    Intent navigateToMapIntent = new Intent(this, MapActivity.class);
+    startActivity(navigateToMapIntent);
     finish();
   }
 

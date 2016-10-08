@@ -11,4 +11,11 @@
   <string name="error_incorrect_password">This password might be incorrect</string>
   <string name="error_field_required">This field is required</string>
 
+  <string name="message_enable_location_services">Enable location services</string>
+  <string name="message_go_to_location_settings">Please go to settings and enable the GPS to catch the best promos.</string>
+  <string name="action_go_to_settings">Go to settings</string>
+  <string name="action_cancel">Cancel</string>
+  <string name="error_getting_location">Problems getting your location</string>
+  <string name="action_retry">Retry</string>
+
 </resources>

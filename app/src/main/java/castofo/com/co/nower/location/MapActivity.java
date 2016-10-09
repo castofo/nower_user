@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,6 +38,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   @BindView(R.id.map)
   View mapFragmentView;
+  @BindView(R.id.fab_progress_circle)
+  FABProgressCircle fabProgressCircle;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -82,6 +85,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public void showProgress() {
     //TODO Show progress while getting location (overlay button changing image).
+    fabProgressCircle.show();
+  }
+
+  @Override
+  public void hideProgress() {
+    fabProgressCircle.hide();
+  }
+
+  @Override
+  public void finishProgress() {
+    fabProgressCircle.beginFinalAnimation();
   }
 
   @Override

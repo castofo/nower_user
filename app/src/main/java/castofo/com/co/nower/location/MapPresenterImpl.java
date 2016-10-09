@@ -33,6 +33,7 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
   @Override
   public void onGpsDisabledError() {
     if (mMapView != null) {
+      mMapView.hideProgress();
       mMapView.showGpsDialog();
     }
   }
@@ -40,6 +41,7 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
   @Override
   public void onGettingLocationError() {
     if (mMapView != null) {
+      mMapView.hideProgress();
       mMapView.showGettingLocationError();
     }
   }
@@ -51,6 +53,7 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
       mMapView.moveCamera(userPosition);
       mMapView.addMarkerForUser(userPosition);
       mMapView.showRange(userPosition);
+      mMapView.finishProgress();
     }
   }
 }

@@ -13,6 +13,10 @@ public interface MapView {
 
   void showProgress();
 
+  void hideProgress();
+
+  void finishProgress();
+
   void moveCamera(LatLng position);
 
   void addMarkerForUser(LatLng userPosition);

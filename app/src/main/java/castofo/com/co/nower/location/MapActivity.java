@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.github.jorgecastilloprz.FABProgressCircle;
+import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,11 +26,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import castofo.com.co.nower.R;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapView,
-    DialogCreatorHelper.DialogCreatorListener {
+    DialogCreatorHelper.DialogCreatorListener, FABProgressListener {
 
   private static final String TAG = MapActivity.class.getSimpleName();
   private final static int ENABLE_GPS_REQUEST_CODE = 1;
@@ -40,6 +43,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   View mapFragmentView;
   @BindView(R.id.fab_progress_circle)
   FABProgressCircle fabProgressCircle;
+  @BindView(R.id.fab_refresh)
+  FloatingActionButton fabRefresh;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -49,6 +54,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     super.onCreate(savedInstanceState);
     setContentView(castofo.com.co.nower.R.layout.activity_map);
     ButterKnife.bind(this);
+    fabProgressCircle.attachListener(this);
 
     mMapPresenter = new MapPresenterImpl(this);
 
@@ -82,20 +88,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     return MapActivity.this;
   }
 
+  @OnClick(R.id.fab_refresh)
+  public void onRefreshClick() {
+    Log.i(TAG, "Refresh button clicked.");
+    mMapPresenter.locateUser();
+  }
+
   @Override
   public void showProgress() {
-    //TODO Show progress while getting location (overlay button changing image).
+    fabRefresh.setEnabled(false);
+    // TODO Change the fab's imgResource to show progress.
     fabProgressCircle.show();
   }
 
   @Override
   public void hideProgress() {
     fabProgressCircle.hide();
+    fabRefresh.setImageResource(R.mipmap.ic_refresh_white_24dp);
+    fabRefresh.setEnabled(true);
   }
 
   @Override
   public void finishProgress() {
     fabProgressCircle.beginFinalAnimation();
+  }
+
+  @Override
+  public void onFABProgressAnimationEnd() {
+    fabRefresh.setImageResource(R.mipmap.ic_refresh_white_24dp);
+    fabRefresh.setEnabled(true);
   }
 
   @Override
@@ -128,6 +149,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
+  public void clearMap() {
+    mMap.clear();
+  }
+
+  @Override
   public void showGpsDialog() {
     DialogFragment gpsDialog = DialogCreatorHelper
         .newInstance(R.string.message_enable_location_services,
@@ -157,12 +183,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                            new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        // Retries to get the user's location.
         mMapPresenter.locateUser();
       }
     });
     gettingLocationErrorSnackbar.show();
   }
 
+  // TODO Solve problems when user didn't enable his GPS.
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == ENABLE_GPS_REQUEST_CODE && resultCode == 0) {
       // The user enabled the GPS.

@@ -23,6 +23,8 @@ public interface MapView {
 
   void showRange(LatLng userPosition);
 
+  void clearMap();
+
   void showGpsDialog();
 
   void showGettingLocationError();

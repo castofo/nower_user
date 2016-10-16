@@ -41,16 +41,12 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   }
 
   @Override
-  public void getLocation(OnLocationChangedListener listener) {
-    Log.i(TAG, "Entered getLocation().");
-    mLocationChangedListener = listener;
+  public void checkGpsAvailability(OnLocationChangedListener listener) {
     if (isGpsEnabled()) {
-      createGoogleApiClientInstance();
-      connectGoogleApiClient();
-      createLocationRequest();
+      listener.onGpsAvailable();
     }
     else {
-      mLocationChangedListener.onGpsDisabledError();
+      listener.onGpsDisabledError();
     }
   }
 
@@ -58,6 +54,15 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     LocationManager mLocationManager = (LocationManager) mActivity
         .getSystemService(Context.LOCATION_SERVICE);
     return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+  }
+
+  @Override
+  public void getLocation(OnLocationChangedListener listener) {
+    Log.i(TAG, "Entered getLocation().");
+    mLocationChangedListener = listener;
+    createGoogleApiClientInstance();
+    connectGoogleApiClient();
+    createLocationRequest();
   }
 
   protected synchronized void createGoogleApiClientInstance() {

@@ -11,10 +11,14 @@ public interface MapInteractor {
 
     void onGpsDisabledError();
 
+    void onGpsAvailable();
+
     void onGettingLocationError();
 
     void onGettingLocationSuccess(Location userPosition);
   }
+
+  void checkGpsAvailability(OnLocationChangedListener listener);
 
   void getLocation(OnLocationChangedListener listener);
 }

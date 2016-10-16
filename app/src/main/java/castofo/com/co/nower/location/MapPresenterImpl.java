@@ -19,10 +19,7 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
 
   @Override
   public void locateUser() {
-    if (mMapView != null) {
-      mMapView.showProgress();
-      mMapInteractor.getLocation(this);
-    }
+    mMapInteractor.checkGpsAvailability(this);
   }
 
   @Override
@@ -33,8 +30,15 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
   @Override
   public void onGpsDisabledError() {
     if (mMapView != null) {
-      mMapView.hideProgress();
       mMapView.showGpsDialog();
+    }
+  }
+
+  @Override
+  public void onGpsAvailable() {
+    if (mMapView != null) {
+      mMapView.showProgress();
+      mMapInteractor.getLocation(this);
     }
   }
 
@@ -50,6 +54,7 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
   public void onGettingLocationSuccess(Location userLocation) {
     if (mMapView != null) {
       LatLng userPosition = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+      mMapView.clearMap();
       mMapView.moveCamera(userPosition);
       mMapView.addMarkerForUser(userPosition);
       mMapView.showRange(userPosition);

@@ -97,7 +97,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public void showProgress() {
     fabRefresh.setEnabled(false);
-    // TODO Change the fab's imgResource to show progress.
+    fabRefresh.setImageResource(R.mipmap.ic_refresh_gray_24dp);
     fabProgressCircle.show();
   }
 
@@ -190,11 +190,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     gettingLocationErrorSnackbar.show();
   }
 
-  // TODO Solve problems when user didn't enable his GPS.
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == ENABLE_GPS_REQUEST_CODE && resultCode == 0) {
-      // The user enabled the GPS.
-      mMapPresenter.locateUser();
+    super.onActivityResult(requestCode, resultCode, data);
+    switch (requestCode) {
+      case ENABLE_GPS_REQUEST_CODE:
+        mMapPresenter.locateUser();
+        break;
     }
   }
 

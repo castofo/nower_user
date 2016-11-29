@@ -6,6 +6,8 @@ package castofo.com.co.nower.location;
 public interface MapPresenter {
 
   void locateUser();
+
+  void requestLocationPermission();
   
   void onDestroy();
 }

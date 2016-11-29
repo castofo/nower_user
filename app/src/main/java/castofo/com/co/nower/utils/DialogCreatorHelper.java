@@ -1,12 +1,14 @@
 package castofo.com.co.nower.utils;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by Alejandro on 06/07/2016.
@@ -17,6 +19,7 @@ public class DialogCreatorHelper extends DialogFragment {
   public static final String MESSAGE_ID = "MESSAGE_ID";
   public static final String POSITIVE_BTN_TEXT_ID = "POSITIVE_BTN_TEXT_ID";
   public static final String NEGATIVE_BTN_TEXT_ID = "NEGATIVE_BTN_TEXT_ID";
+  public static final String IS_CANCELABLE = "IS_CANCELABLE";
 
   private DialogCreatorListener mListener;
   private int mTitleId;
@@ -24,6 +27,7 @@ public class DialogCreatorHelper extends DialogFragment {
   private int mPositiveBtnTextId;
   private int mNegativeBtnTextId;
   private static View mCustomView;
+  private boolean mIsCancelable;
 
   /** The activity that creates an instance of this dialog fragment must implement this interface
    * in order to receive event callbacks.
@@ -34,7 +38,8 @@ public class DialogCreatorHelper extends DialogFragment {
   }
 
   public static DialogCreatorHelper newInstance(int titleId, int messageId, int positiveBtnTextId,
-                                                int negativeBtnTextId, View customView) {
+                                                int negativeBtnTextId, View customView,
+                                                boolean isCancelable) {
     DialogCreatorHelper dialogCreatorHelper = new DialogCreatorHelper();
 
     Bundle args = new Bundle();
@@ -43,6 +48,7 @@ public class DialogCreatorHelper extends DialogFragment {
     args.putInt(POSITIVE_BTN_TEXT_ID, positiveBtnTextId);
     args.putInt(NEGATIVE_BTN_TEXT_ID, negativeBtnTextId);
     mCustomView = customView;
+    args.putBoolean(IS_CANCELABLE, isCancelable);
     dialogCreatorHelper.setArguments(args);
 
     return dialogCreatorHelper;
@@ -55,19 +61,27 @@ public class DialogCreatorHelper extends DialogFragment {
     mMessageId = getArguments().getInt(MESSAGE_ID);
     mPositiveBtnTextId = getArguments().getInt(POSITIVE_BTN_TEXT_ID);
     mNegativeBtnTextId = getArguments().getInt(NEGATIVE_BTN_TEXT_ID);
+    mIsCancelable = getArguments().getBoolean(IS_CANCELABLE);
   }
 
   @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
+  public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
+    setCancelable(mIsCancelable);
+    getDialog().setCanceledOnTouchOutside(mIsCancelable);
+    return super.onCreateView(inflater, root, savedInstanceState);
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
     // Verifies that the host activity implements the callback interface.
     try {
       // Instantiates the DialogCreatorListener so that events can be sent to the host.
-      mListener = (DialogCreatorListener) activity;
+      mListener = (DialogCreatorListener) context;
     }
     catch (ClassCastException e) {
       // The activity doesn't implement the interface and an exception is thrown.
-      throw new ClassCastException(activity.toString() + " must implement DialogCreatorListener.");
+      throw new ClassCastException(context.toString() + " must implement DialogCreatorListener.");
     }
   }
 

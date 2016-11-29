@@ -2,6 +2,7 @@ package castofo.com.co.nower.location;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -30,11 +31,13 @@ import butterknife.OnClick;
 import castofo.com.co.nower.R;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
 
+import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CODE;
+import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapView,
     DialogCreatorHelper.DialogCreatorListener, FABProgressListener {
 
   private static final String TAG = MapActivity.class.getSimpleName();
-  private final static int ENABLE_GPS_REQUEST_CODE = 1;
   private static final float ZOOM_LEVEL = 15f;
   private static final float RADIUS = 1000;
   private static final float STROKE_WIDTH = 1f;
@@ -132,6 +135,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mMap.addMarker(markerOptions);
   }
 
+  @Override
+  public void addMarkerForBranch(LatLng branchPosition) {
+    MarkerOptions markerOptions = new MarkerOptions();
+    markerOptions.position(branchPosition)
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+    mMap.addMarker(markerOptions);
+  }
+
   /**
    * Shows a circle around the user's position with radius equals to the given one.
    *
@@ -156,17 +167,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public void showGpsDialog() {
     DialogFragment gpsDialog = DialogCreatorHelper
-        .newInstance(R.string.message_enable_location_services,
+        .newInstance(R.string.label_enable_location_services,
                      R.string.message_go_to_location_settings, R.string.action_go_to_settings,
-                     R.string.action_cancel, null);
-    gpsDialog.show(getSupportFragmentManager(), TAG);
+                     R.string.action_cancel, null, true);
+    gpsDialog.show(getSupportFragmentManager(),
+                   getResources().getString(R.string.label_enable_location_services));
+  }
+
+  @Override
+  public void showLocationPermissionExplanation() {
+    DialogFragment locationPermissionExplanationDialog = DialogCreatorHelper
+        .newInstance(R.string.label_location_permission, R.string.message_location_needed,
+                     R.string.action_ok, 0, null, false);
+    locationPermissionExplanationDialog
+        .show(getSupportFragmentManager(),
+              getResources().getString(R.string.label_location_permission));
   }
 
   @Override
   public void onDialogPositiveClick(DialogFragment dialog) {
     Log.i(TAG, "The user clicked the positive action.");
-    Intent enableGpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-    startActivityForResult(enableGpsIntent, ENABLE_GPS_REQUEST_CODE);
+    String dialogTag = dialog.getTag();
+    if (dialogTag.equals(getResources().getString(R.string.label_enable_location_services))) {
+      Intent enableGpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+      startActivityForResult(enableGpsIntent, ENABLE_GPS_REQUEST_CODE);
+    }
+    else if (dialogTag.equals(getResources().getString(R.string.label_location_permission))) {
+      mMapPresenter.requestLocationPermission();
+    }
   }
 
   @Override
@@ -190,12 +218,64 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     gettingLocationErrorSnackbar.show();
   }
 
+  @Override
+  public void showNoInternetError() {
+    Snackbar.make(mapFragmentView, getResources().getString(R.string.error_no_internet),
+                  Snackbar.LENGTH_LONG).show();
+  }
+
+  @Override
+  public void showGettingNearbyBranchesError() {
+    Snackbar gettingNearbyPromosErrorSnackbar = Snackbar
+        .make(mapFragmentView, getResources().getString(R.string.error_getting_nearby_promos),
+              Snackbar.LENGTH_LONG);
+    gettingNearbyPromosErrorSnackbar.setAction(getResources().getString(R.string.action_retry),
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            // Retries to get the user's location and his nearby promos.
+            mMapPresenter.locateUser();
+          }
+        });
+    gettingNearbyPromosErrorSnackbar.show();
+  }
+
+  @Override
+  public void showNoNearbyPromosMessage() {
+    DialogFragment noNearbyPromosDialog = DialogCreatorHelper
+        .newInstance(R.string.label_we_are_sorry, R.string.message_no_nearby_promos,
+                     R.string.action_ok, 0, null, true);
+    noNearbyPromosDialog.show(getSupportFragmentManager(),
+                              getResources().getString(R.string.label_we_are_sorry));
+  }
+
+  // TODO move refresh button on marker click.
+
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
       case ENABLE_GPS_REQUEST_CODE:
         mMapPresenter.locateUser();
         break;
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+  {
+    switch (requestCode) {
+      case PERMISSION_ACCESS_FINE_LOCATION_CODE: {
+        // If the request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          // The location permission was granted.
+          mMapPresenter.locateUser();
+        }
+        else {
+          // The location permission was denied.
+          hideProgress();
+        }
+        break;
+      }
     }
   }
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -81,9 +80,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     mMap = googleMap;
     mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    mMap.getUiSettings().setMapToolbarEnabled(false);
 
     // After the map is ready, the user has to be located automatically.
-    mMapPresenter.locateUser();
+    mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+      @Override
+      public void onMapLoaded() {
+        mMapPresenter.locateUser();
+      }
+    });
   }
 
   @Override
@@ -165,16 +170,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public void showGpsDialog() {
-    DialogFragment gpsDialog = DialogCreatorHelper
-        .newInstance(R.string.label_enable_location_services,
-                     R.string.message_go_to_location_settings, R.string.action_go_to_settings,
-                     R.string.action_cancel, null, true);
-    gpsDialog.show(getSupportFragmentManager(),
-                   getResources().getString(R.string.label_enable_location_services));
-  }
-
-  @Override
   public void showLocationPermissionExplanation() {
     DialogFragment locationPermissionExplanationDialog = DialogCreatorHelper
         .newInstance(R.string.label_location_permission, R.string.message_location_needed,
@@ -188,11 +183,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void onDialogPositiveClick(DialogFragment dialog) {
     Log.i(TAG, "The user clicked the positive action.");
     String dialogTag = dialog.getTag();
-    if (dialogTag.equals(getResources().getString(R.string.label_enable_location_services))) {
-      Intent enableGpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-      startActivityForResult(enableGpsIntent, ENABLE_GPS_REQUEST_CODE);
-    }
-    else if (dialogTag.equals(getResources().getString(R.string.label_location_permission))) {
+    if (dialogTag.equals(getResources().getString(R.string.label_location_permission))) {
       mMapPresenter.requestLocationPermission();
     }
   }
@@ -249,13 +240,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                               getResources().getString(R.string.label_we_are_sorry));
   }
 
-  // TODO move refresh button on marker click.
-
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
       case ENABLE_GPS_REQUEST_CODE:
-        mMapPresenter.locateUser();
+        switch (resultCode) {
+          case Activity.RESULT_OK:
+            // All required changes were successfully made.
+            mMapPresenter.locateUser();
+            break;
+          case Activity.RESULT_CANCELED:
+            // The user was asked to change settings, but chose not to.
+            hideProgress();
+            break;
+          default:
+            break;
+        }
         break;
     }
   }
@@ -272,7 +272,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         else {
           // The location permission was denied.
-          hideProgress();
         }
         break;
       }

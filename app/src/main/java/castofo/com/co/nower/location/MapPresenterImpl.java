@@ -11,8 +11,9 @@ import castofo.com.co.nower.models.Branch;
 /**
  * Created by Alejandro on 19/09/2016.
  */
-public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationChangedListener,
-  MapInteractor.OnBranchesReceivedListener {
+public class MapPresenterImpl implements MapPresenter,
+    MapInteractor.OnLocationPermissionCheckedListener, MapInteractor.OnLocationChangedListener,
+    MapInteractor.OnBranchesReceivedListener {
 
   private MapView mMapView;
   private MapInteractor mMapInteractor;
@@ -24,7 +25,12 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
 
   @Override
   public void locateUser() {
-    mMapInteractor.checkGpsAvailability(this);
+    mMapInteractor.checkLocationPermission(this);
+  }
+
+  @Override
+  public void requestLocationPermission() {
+    mMapInteractor.requestLocationPermission();
   }
 
   @Override
@@ -33,30 +39,23 @@ public class MapPresenterImpl implements MapPresenter, MapInteractor.OnLocationC
   }
 
   @Override
-  public void onGpsDisabledError() {
-    if (mMapView != null) {
-      mMapView.showGpsDialog();
-    }
-  }
-
-  @Override
-  public void onGpsAvailable() {
-    if (mMapView != null) {
-      mMapView.showProgress();
-      mMapInteractor.getLocation(this);
-    }
-  }
-
-  @Override
-  public void onPermissionExplanationNeeded() {
+  public void onLocationPermissionExplanationNeeded() {
     if (mMapView != null) {
       mMapView.showLocationPermissionExplanation();
     }
   }
 
   @Override
-  public void requestLocationPermission() {
-    mMapInteractor.requestLocationPermission();
+  public void onRequestLocationPermissionNeeded() {
+    requestLocationPermission();
+  }
+
+  @Override
+  public void onLocationPermissionGranted() {
+    if (mMapView != null) {
+      mMapView.showProgress();
+      mMapInteractor.getLocation(this);
+    }
   }
 
   @Override

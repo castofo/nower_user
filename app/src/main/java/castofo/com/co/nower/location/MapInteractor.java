@@ -11,13 +11,16 @@ import castofo.com.co.nower.models.Branch;
  */
 public interface MapInteractor {
 
+  interface OnLocationPermissionCheckedListener {
+
+    void onLocationPermissionExplanationNeeded();
+
+    void onRequestLocationPermissionNeeded();
+
+    void onLocationPermissionGranted();
+  }
+
   interface OnLocationChangedListener {
-
-    void onGpsDisabledError();
-
-    void onGpsAvailable();
-
-    void onPermissionExplanationNeeded();
 
     void onGettingLocationError();
 
@@ -33,11 +36,11 @@ public interface MapInteractor {
     void onGettingNearbyBranchesSuccess(List<Branch> nearbyBranchList);
   }
 
-  void checkGpsAvailability(OnLocationChangedListener listener);
-
-  void getLocation(OnLocationChangedListener listener);
+  void checkLocationPermission(OnLocationPermissionCheckedListener listener);
 
   void requestLocationPermission();
+
+  void getLocation(OnLocationChangedListener listener);
 
   void getNearbyBranches(double latitude, double longitude, OnBranchesReceivedListener listener);
 }

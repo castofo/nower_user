@@ -27,8 +27,6 @@ public interface MapView {
 
   void clearMap();
 
-  void showGpsDialog();
-
   void showLocationPermissionExplanation();
 
   void showGettingLocationError();

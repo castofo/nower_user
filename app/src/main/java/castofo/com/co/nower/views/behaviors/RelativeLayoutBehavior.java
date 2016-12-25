@@ -1,4 +1,4 @@
-package castofo.com.co.nower.behaviors;
+package castofo.com.co.nower.views.behaviors;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;

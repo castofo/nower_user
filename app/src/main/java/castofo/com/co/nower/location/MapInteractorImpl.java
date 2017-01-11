@@ -29,8 +29,15 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.services.MapService;
+import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
 
@@ -52,10 +59,14 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   private LocationSettingsRequest mLocationSettingsRequest;
   private PendingResult<LocationSettingsResult> mResult;
   private MapInteractor.OnLocationChangedListener mLocationChangedListener;
+  private MapService mMapService;
 
   public MapInteractorImpl(Activity activity) {
     // The Activity is required for the usage of the GoogleApiClient.
     this.mActivity = activity;
+    mMapService = new ServiceFactory.Builder()
+        .withBaseUrl(BuildConfig.API_BASE_URL)
+        .buildService(MapService.class);
   }
 
   @Override
@@ -264,15 +275,22 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     mLocationChangedListener.onGettingLocationSuccess(location);
   }
 
-  // TODO apply RxJava to this request.
   @Override
   public void getNearbyBranches(double latitude, double longitude,
-                                OnBranchesReceivedListener listener) {
-    Branch branch = new Branch();
-    branch.setLatitude(6.1958694);
-    branch.setLongitude(-75.6);
-    List<Branch> nearbyBranchList = new ArrayList<>();
-    // nearbyBranchList.add(branch);
-    listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
+                                final OnBranchesReceivedListener listener) {
+    mMapService.getNearbyBranches(latitude, longitude)
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<List<Branch>>() {
+          @Override
+          public void call(List<Branch> nearbyBranchList) {
+            listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            listener.onGettingNearbyBranchesError();
+          }
+        });
   }
 }

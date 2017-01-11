@@ -3,7 +3,6 @@ package castofo.com.co.nower.models;
 /**
  * Created by Alejandro on 29/10/2016.
  */
-
 public class Branch {
 
   private double latitude;

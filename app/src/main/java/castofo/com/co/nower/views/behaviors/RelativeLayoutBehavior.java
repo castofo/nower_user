@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 /**
  * Created by Alejandro on 21/12/2016.
  */
-
 public class RelativeLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLayout> {
 
   public RelativeLayoutBehavior(Context context, AttributeSet attrs) {

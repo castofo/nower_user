@@ -16,10 +16,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", '"http://api.nower.co"'
+            buildConfigField "String", "API_BASE_URL", "\"${API_BASE_URL}\""
         }
         debug {
-            buildConfigField "String", "API_BASE_URL", '"http://api.dev.nower.co"'
+            buildConfigField "String", "DEBUG_API_BASE_URL", "\"${DEBUG_API_BASE_URL}\""
         }
     }
 }

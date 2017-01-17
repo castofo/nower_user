@@ -31,6 +31,7 @@ import java.util.List;
 
 import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.network.ConnectivityInterceptor;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
@@ -65,7 +66,8 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     // The Activity is required for the usage of the GoogleApiClient.
     this.mActivity = activity;
     mMapService = new ServiceFactory.Builder()
-        .withBaseUrl(BuildConfig.API_BASE_URL)
+        .withBaseUrl(BuildConfig.DEBUG_API_BASE_URL)
+        .addInterceptor(new ConnectivityInterceptor(mActivity))
         .buildService(MapService.class);
   }
 
@@ -289,7 +291,7 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            listener.onGettingNearbyBranchesError();
+            listener.onGettingNearbyBranchesError(throwable);
           }
         });
   }

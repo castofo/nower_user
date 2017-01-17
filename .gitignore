@@ -50,3 +50,6 @@ gen-external-apklibs
 
 # MAC DS_Store
 .DS_Store
+
+# Gradle configuration file
+gradle.properties

@@ -7,6 +7,9 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.network.ConnectivityInterceptor;
+
+import static castofo.com.co.nower.network.ConnectivityInterceptor.isInternetConnectionError;
 
 /**
  * Created by Alejandro on 19/09/2016.
@@ -82,18 +85,15 @@ public class MapPresenterImpl implements MapPresenter,
   }
 
   @Override
-  public void onNoInternetError() {
+  public void onGettingNearbyBranchesError(Throwable throwable) {
     if (mMapView != null) {
       mMapView.hideProgress();
-      mMapView.showNoInternetError();
-    }
-  }
-
-  @Override
-  public void onGettingNearbyBranchesError() {
-    if (mMapView != null) {
-      mMapView.hideProgress();
-      mMapView.showGettingNearbyBranchesError();
+      if (isInternetConnectionError(throwable)) {
+        mMapView.showNoInternetError();
+      }
+      else {
+        mMapView.showGettingNearbyBranchesError();
+      }
     }
   }
 

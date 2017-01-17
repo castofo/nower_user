@@ -29,9 +29,7 @@ public interface MapInteractor {
 
   interface OnBranchesReceivedListener {
 
-    void onNoInternetError();
-
-    void onGettingNearbyBranchesError();
+    void onGettingNearbyBranchesError(Throwable throwable);
 
     void onGettingNearbyBranchesSuccess(List<Branch> nearbyBranchList);
   }

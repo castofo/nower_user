@@ -11,21 +11,45 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import castofo.com.co.nower.BuildConfig;
+import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.network.ConnectivityInterceptor;
+import castofo.com.co.nower.services.MapService;
+import castofo.com.co.nower.services.ServiceFactory;
+import castofo.com.co.nower.utils.RequestCodeHelper;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
 
 /**
  * Created by Alejandro on 01/10/2016.
  */
 public class MapInteractorImpl implements MapInteractor, GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult>,
+    LocationListener {
 
-  private static final String TAG = "MapInteractorImpl";
+  private static final String TAG = MapInteractorImpl.class.getSimpleName();
   private static final int INTERVAL = 10 * 1000;
   private static final int FASTEST_INTERVAL = 1 * 1000;
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -33,27 +57,45 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   private Activity mActivity;
   private GoogleApiClient mGoogleApiClient;
   private LocationRequest mLocationRequest;
+  private LocationSettingsRequest mLocationSettingsRequest;
+  private PendingResult<LocationSettingsResult> mResult;
   private MapInteractor.OnLocationChangedListener mLocationChangedListener;
+  private MapService mMapService;
 
   public MapInteractorImpl(Activity activity) {
-    // The Activity is required for the use of the GoogleApiClient.
+    // The Activity is required for the usage of the GoogleApiClient.
     this.mActivity = activity;
+    mMapService = new ServiceFactory.Builder()
+        .withBaseUrl(BuildConfig.DEBUG_API_BASE_URL)
+        .addInterceptor(new ConnectivityInterceptor(mActivity))
+        .buildService(MapService.class);
   }
 
   @Override
-  public void checkGpsAvailability(OnLocationChangedListener listener) {
-    if (isGpsEnabled()) {
-      listener.onGpsAvailable();
+  public void checkLocationPermission(OnLocationPermissionCheckedListener listener) {
+    if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
+      if (ActivityCompat
+          .shouldShowRequestPermissionRationale(mActivity,
+                                                Manifest.permission.ACCESS_FINE_LOCATION)) {
+        // An explanation for this permission has to be shown to the user.
+        listener.onLocationPermissionExplanationNeeded();
+      }
+      else {
+        // No explanation is needed and the permission can be requested.
+        listener.onRequestLocationPermissionNeeded();
+      }
     }
     else {
-      listener.onGpsDisabledError();
+      listener.onLocationPermissionGranted();
     }
   }
 
-  private boolean isGpsEnabled() {
-    LocationManager mLocationManager = (LocationManager) mActivity
-        .getSystemService(Context.LOCATION_SERVICE);
-    return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+  @Override
+  public void requestLocationPermission() {
+    ActivityCompat
+        .requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            PERMISSION_ACCESS_FINE_LOCATION_CODE);
   }
 
   @Override
@@ -61,8 +103,10 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     Log.i(TAG, "Entered getLocation().");
     mLocationChangedListener = listener;
     createGoogleApiClientInstance();
-    connectGoogleApiClient();
     createLocationRequest();
+    createLocationSettingsRequest();
+    checkLocationSettings();
+    connectGoogleApiClient();
   }
 
   protected synchronized void createGoogleApiClientInstance() {
@@ -75,11 +119,6 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     }
   }
 
-  public void connectGoogleApiClient() {
-    Log.i(TAG, "mGoogleApiClient.connect() triggered.");
-    mGoogleApiClient.connect();
-  }
-
   protected synchronized void createLocationRequest() {
     if (mLocationRequest == null) {
       mLocationRequest = LocationRequest.create()
@@ -89,33 +128,22 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     }
   }
 
-  @Override
-  public void onConnected(@Nullable Bundle bundle) {
-    if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED) {
-      // There is no ACCESS_FINE_LOCATION permission.
-      disconnectGoogleApiClient();
-      notifyLocationUnavailability();
+  protected synchronized void createLocationSettingsRequest() {
+    if (mLocationSettingsRequest == null) {
+      LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+          .addLocationRequest(mLocationRequest);
+      mLocationSettingsRequest = builder.build();
     }
+  }
 
-    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+  protected synchronized void checkLocationSettings() {
+   mResult = LocationServices.SettingsApi
+       .checkLocationSettings(mGoogleApiClient, mLocationSettingsRequest);
+  }
 
-    if (location != null) {
-      disconnectGoogleApiClient();
-      notifyLocationAvailability(location);
-    }
-    else {
-      Log.i(TAG, "location is null.");
-      if (isGpsEnabled()) {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                                                                 mLocationRequest, this);
-      }
-      else {
-        Log.i(TAG, "The GPS has to be enabled.");
-        disconnectGoogleApiClient();
-        mLocationChangedListener.onGpsDisabledError();
-      }
-    }
+  public void connectGoogleApiClient() {
+    Log.i(TAG, "mGoogleApiClient.connect() triggered.");
+    mGoogleApiClient.connect();
   }
 
   @Override
@@ -149,6 +177,80 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   }
 
   @Override
+  public void onConnected(@Nullable Bundle bundle) {
+    Log.i(TAG, "mGoogleApiClient connected.");
+    mResult.setResultCallback(this);
+  }
+
+  @Override
+  public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+    final Status status = locationSettingsResult.getStatus();
+    switch (status.getStatusCode()) {
+      case LocationSettingsStatusCodes.SUCCESS:
+        // All location settings are satisfied. The client can initialize location requests here.
+        Log.i(TAG, "Location settings are satisfied.");
+        requestLocation();
+        break;
+      case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+        // Location settings are not satisfied. But could be fixed by showing a dialog to the user.
+        Log.i(TAG, "Location settings are not satisfied.");
+        disconnectGoogleApiClient();
+        try {
+          // Shows the dialog by calling startResolutionForResult() and checks the result in
+          // onActivityResult().
+          status.startResolutionForResult(mActivity, RequestCodeHelper.ENABLE_GPS_REQUEST_CODE);
+        }
+        catch (IntentSender.SendIntentException e) {
+          notifyLocationUnavailability();
+        }
+        break;
+      case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+        // Location settings are not satisfied. However, there is no way to fix the problem and the
+        // dialog is not shown.
+        Log.i(TAG, "Location settings are not satisfied and the problem can't be fixed.");
+        disconnectGoogleApiClient();
+        notifyLocationUnavailability();
+        break;
+    }
+  }
+
+  public void requestLocation() {
+    // It's mandatory to check the location permission again in order to be able to use the
+    // FusedLocationApi.
+    if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+        == PackageManager.PERMISSION_GRANTED) {
+      Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+      if (location != null) {
+        disconnectGoogleApiClient();
+        notifyLocationAvailability(location);
+      }
+      else {
+        Log.i(TAG, "Location is null.");
+        if (isGpsEnabled()) {
+          LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                                                                   mLocationRequest, this);
+        }
+        else {
+          Log.i(TAG, "The GPS has to be enabled.");
+          disconnectGoogleApiClient();
+          notifyLocationUnavailability();
+        }
+      }
+    }
+    else {
+      disconnectGoogleApiClient();
+      notifyLocationUnavailability();
+    }
+  }
+
+  private boolean isGpsEnabled() {
+    LocationManager mLocationManager = (LocationManager) mActivity
+        .getSystemService(Context.LOCATION_SERVICE);
+    return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+  }
+
+  @Override
   public void onLocationChanged(Location location) {
     // Location update received.
     Log.i(TAG, "onLocationChanged() called.");
@@ -165,13 +267,26 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     }
   }
 
+  public void notifyLocationUnavailability() {
+    mLocationChangedListener.onGettingLocationError();
+  }
+
   public void notifyLocationAvailability(Location location) {
     Log.i(TAG, "Latitude: " + String.valueOf(location.getLatitude()) + ".");
     Log.i(TAG, "Longitude: " + String.valueOf(location.getLongitude()) + ".");
     mLocationChangedListener.onGettingLocationSuccess(location);
   }
 
-  public void notifyLocationUnavailability() {
-    mLocationChangedListener.onGettingLocationError();
+  @Override
+  public void getNearbyBranches(double latitude, double longitude,
+                                final OnBranchesReceivedListener listener) {
+    mMapService.getNearbyBranches(latitude, longitude)
+        .subscribeOn(Schedulers.newThread()) // TODO improve with the better way
+        .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way
+        .subscribe(nearbyBranchList -> {
+          listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
+        }, throwable -> {
+          listener.onGettingNearbyBranchesError(throwable);
+        });
   }
 }

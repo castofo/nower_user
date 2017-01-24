@@ -21,11 +21,19 @@ public interface MapView {
 
   void addMarkerForUser(LatLng userPosition);
 
+  void addMarkerForBranch(LatLng branchPosition);
+
   void showRange(LatLng userPosition);
 
   void clearMap();
 
-  void showGpsDialog();
+  void showLocationPermissionExplanation();
 
   void showGettingLocationError();
+
+  void showNoInternetError();
+
+  void showGettingNearbyBranchesError();
+
+  void showNoNearbyPromosMessage();
 }

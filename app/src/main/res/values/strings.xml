@@ -11,11 +11,18 @@
   <string name="error_incorrect_password">This password might be incorrect</string>
   <string name="error_field_required">This field is required</string>
 
-  <string name="message_enable_location_services">Enable location services</string>
+  <string name="label_enable_location_services">Enable location services</string>
   <string name="message_go_to_location_settings">Please go to settings and enable the GPS to catch the best promos.</string>
   <string name="action_go_to_settings">Go to settings</string>
   <string name="action_cancel">Cancel</string>
   <string name="error_getting_location">Problems getting your location</string>
   <string name="action_retry">Retry</string>
+  <string name="error_no_internet">Problems with the Internet connection</string>
+  <string name="error_getting_nearby_promos">An error occurred while finding nearby promos</string>
+  <string name="message_no_nearby_promos">Unfortunately, there are no nearby promos available.</string>
+  <string name="label_we_are_sorry">We\'re sorry</string>
+  <string name="action_ok">Ok</string>
+  <string name="message_location_needed">We need to use your location to find the best promos for you.</string>
+  <string name="label_location_permission">Location permission</string>
 
 </resources>

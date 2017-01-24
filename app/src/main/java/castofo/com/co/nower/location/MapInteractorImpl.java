@@ -281,18 +281,12 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   public void getNearbyBranches(double latitude, double longitude,
                                 final OnBranchesReceivedListener listener) {
     mMapService.getNearbyBranches(latitude, longitude)
-        .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<List<Branch>>() {
-          @Override
-          public void call(List<Branch> nearbyBranchList) {
-            listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
-          }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            listener.onGettingNearbyBranchesError(throwable);
-          }
+        .subscribeOn(Schedulers.newThread()) // TODO improve with the better way
+        .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way
+        .subscribe(nearbyBranchList -> {
+          listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
+        }, throwable -> {
+          listener.onGettingNearbyBranchesError(throwable);
         });
   }
 }

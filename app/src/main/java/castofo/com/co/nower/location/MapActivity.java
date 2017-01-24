@@ -83,12 +83,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mMap.getUiSettings().setMapToolbarEnabled(false);
 
     // After the map is ready, the user has to be located automatically.
-    mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-      @Override
-      public void onMapLoaded() {
-        mMapPresenter.locateUser();
-      }
-    });
+    mMap.setOnMapLoadedCallback(() -> mMapPresenter.locateUser());
   }
 
   @Override
@@ -199,13 +194,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         .make(mapFragmentView, getResources().getString(R.string.error_getting_location),
               Snackbar.LENGTH_LONG);
     gettingLocationErrorSnackbar.setAction(getResources().getString(R.string.action_retry),
-                                           new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        // Retries to get the user's location.
-        mMapPresenter.locateUser();
-      }
-    });
+        view -> {
+          // Retries to get the user's location.
+          mMapPresenter.locateUser();
+        });
     gettingLocationErrorSnackbar.show();
   }
 
@@ -221,12 +213,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         .make(mapFragmentView, getResources().getString(R.string.error_getting_nearby_promos),
               Snackbar.LENGTH_LONG);
     gettingNearbyPromosErrorSnackbar.setAction(getResources().getString(R.string.action_retry),
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            // Retries to get the user's location and his nearby promos.
-            mMapPresenter.locateUser();
-          }
+        view -> {
+          // Retries to get the user's location and his nearby promos.
+          mMapPresenter.locateUser();
         });
     gettingNearbyPromosErrorSnackbar.show();
   }

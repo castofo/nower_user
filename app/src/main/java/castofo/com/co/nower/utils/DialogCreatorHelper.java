@@ -141,11 +141,9 @@ public class DialogCreatorHelper extends DialogFragment {
    */
   public AlertDialog.Builder setPositiveButton(AlertDialog.Builder builder) {
     if (mPositiveBtnTextId != 0) {
-      builder.setPositiveButton(mPositiveBtnTextId, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-          dialog.dismiss();
-          mListener.onDialogPositiveClick(DialogCreatorHelper.this);
-        }
+      builder.setPositiveButton(mPositiveBtnTextId, (dialog, id) -> {
+        dialog.dismiss();
+        mListener.onDialogPositiveClick(DialogCreatorHelper.this);
       });
     }
 
@@ -160,11 +158,8 @@ public class DialogCreatorHelper extends DialogFragment {
    */
   public AlertDialog.Builder setNegativeButton(AlertDialog.Builder builder) {
     if (mNegativeBtnTextId != 0) {
-      builder.setNegativeButton(mNegativeBtnTextId, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-          mListener.onDialogNegativeClick(DialogCreatorHelper.this);
-        }
-      });
+      builder.setNegativeButton(mNegativeBtnTextId,
+          (dialog, id) -> mListener.onDialogNegativeClick(DialogCreatorHelper.this));
     }
 
     return builder;

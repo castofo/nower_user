@@ -4,24 +4,31 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
@@ -34,7 +41,8 @@ import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CO
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapView,
-    DialogCreatorHelper.DialogCreatorListener, FABProgressListener {
+    DialogCreatorHelper.DialogCreatorListener, FABProgressListener, OnMarkerClickListener,
+    OnMapClickListener {
 
   private static final String TAG = MapActivity.class.getSimpleName();
   private static final float ZOOM_LEVEL = 15f;
@@ -47,9 +55,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   FABProgressCircle fabProgressCircle;
   @BindView(R.id.fab_refresh)
   FloatingActionButton fabRefresh;
+  @BindView(R.id.ll_branch_container)
+  LinearLayout llBranchContainer;
+  @BindView(R.id.iv_branch_container_closing)
+  AppCompatImageView ivBranchContainerClosing;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
+  // The BottomSheet contains the information of every branch on the map.
+  private BottomSheetBehavior mBranchContainer;
+  private Marker mCurrentMarker;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +72,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     setContentView(castofo.com.co.nower.R.layout.activity_map);
     ButterKnife.bind(this);
     fabProgressCircle.attachListener(this);
+    mBranchContainer = BottomSheetBehavior.from(llBranchContainer);
+    setBranchContainerCallback();
 
     mMapPresenter = new MapPresenterImpl(this);
 
@@ -81,9 +98,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mMap = googleMap;
     mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     mMap.getUiSettings().setMapToolbarEnabled(false);
+    mMap.setOnMarkerClickListener(this);
+    mMap.setOnMapClickListener(this);
 
     // After the map is ready, the user has to be located automatically.
     mMap.setOnMapLoadedCallback(() -> mMapPresenter.locateUser());
+  }
+
+  /**
+   * Sets the Callback for the Branch container in order to control its behavior.
+   */
+  public void setBranchContainerCallback() {
+    mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
+    mBranchContainer.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+      @Override
+      public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        switch (newState) {
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            ivBranchContainerClosing.setVisibility(View.GONE);
+            break;
+          case BottomSheetBehavior.STATE_EXPANDED:
+            ivBranchContainerClosing.setVisibility(View.VISIBLE);
+            break;
+        }
+      }
+
+      @Override
+      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+      }
+    });
   }
 
   @Override
@@ -128,6 +172,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
+  public void animateCamera(LatLng position) {
+    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, ZOOM_LEVEL));
+  }
+
+  @Override
   public void addMarkerForUser(LatLng userPosition) {
     MarkerOptions markerOptions = new MarkerOptions();
     markerOptions.position(userPosition)
@@ -162,6 +211,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public void clearMap() {
     mMap.clear();
+  }
+
+  @Override
+  public boolean onMarkerClick(Marker marker) {
+    Log.i(TAG, "A marker was clicked.");
+    animateCamera(marker.getPosition());
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+      // TODO do something if the marker clicked is not the user's one.
+      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+    else if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+      if (marker.equals(mCurrentMarker)) {
+        mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
+      }
+    }
+    mCurrentMarker = marker;
+
+    return true;
+  }
+
+  @Override
+  public void onMapClick(LatLng latLng) {
+    mCurrentMarker = null;
+    // The BottomSheet is hidden when the user clicks on the map.
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
+    }
   }
 
   @Override
@@ -227,6 +303,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                      R.string.action_ok, 0, null, true);
     noNearbyPromosDialog.show(getSupportFragmentManager(),
                               getResources().getString(R.string.label_we_are_sorry));
+  }
+
+  /**
+   * Expands the Branch container after the user clicks on the Branch header.
+   */
+  @OnClick(R.id.ll_branch_header)
+  public void onBranchHeaderClick() {
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+    else if (mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+  }
+
+  @OnClick(R.id.iv_branch_container_closing)
+  public void onBranchContainerClosingClick() {
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

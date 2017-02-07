@@ -24,5 +24,4 @@
   <string name="action_ok">Ok</string>
   <string name="message_location_needed">We need to use your location to find the best promos for you.</string>
   <string name="label_location_permission">Location permission</string>
-
 </resources>

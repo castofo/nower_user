@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/ll_branch_container"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  app:behavior_hideable="true"
+  app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
+  app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+  <LinearLayout
+    android:id="@+id/ll_branch_header"
+    style="@style/BranchHeaderBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bottom_sheet_peek_height"
+    android:orientation="horizontal">
+
+    <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/iv_branch_container_closing"
+      style="@style/BranchHeaderBackButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center|start"
+      android:layout_marginStart="@dimen/activity_horizontal_margin"/>
+
+    <android.support.v7.widget.AppCompatTextView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginStart="@dimen/activity_horizontal_margin"
+      android:gravity="center|start"
+      android:text="TITLE"
+      android:textColor="@color/white"/>
+
+  </LinearLayout>
+
+  <LinearLayout
+    style="@style/BranchContentBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:text="CONTENT"
+      android:textColor="@color/black"/>
+
+  </LinearLayout>
+
+</LinearLayout>

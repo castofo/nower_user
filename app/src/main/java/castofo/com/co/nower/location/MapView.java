@@ -19,6 +19,8 @@ public interface MapView {
 
   void moveCamera(LatLng position);
 
+  void animateCamera(LatLng position);
+
   void addMarkerForUser(LatLng userPosition);
 
   void addMarkerForBranch(LatLng branchPosition);

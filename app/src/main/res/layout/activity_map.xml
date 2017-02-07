@@ -40,5 +40,6 @@
 
   </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+  <include layout="@layout/bottom_sheet_branch_container"/>
 
+</android.support.design.widget.CoordinatorLayout>

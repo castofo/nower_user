@@ -115,10 +115,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       public void onStateChanged(@NonNull View bottomSheet, int newState) {
         switch (newState) {
           case BottomSheetBehavior.STATE_COLLAPSED:
-            ivBranchContainerClosing.setVisibility(View.GONE);
+            mMapPresenter.transformBranchContainer(newState);
             break;
           case BottomSheetBehavior.STATE_EXPANDED:
-            ivBranchContainerClosing.setVisibility(View.VISIBLE);
+            mMapPresenter.transformBranchContainer(newState);
             break;
         }
       }
@@ -185,11 +185,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public void addMarkerForBranch(LatLng branchPosition) {
+  public Marker addMarkerForBranch(LatLng branchPosition) {
     MarkerOptions markerOptions = new MarkerOptions();
     markerOptions.position(branchPosition)
         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-    mMap.addMarker(markerOptions);
+    // The Marker is returned to save it in the association map between Marker and Branch.
+    return mMap.addMarker(markerOptions);
   }
 
   /**
@@ -216,28 +217,76 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public boolean onMarkerClick(Marker marker) {
     Log.i(TAG, "A marker was clicked.");
-    animateCamera(marker.getPosition());
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-      // TODO do something if the marker clicked is not the user's one.
-      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    }
-    else if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-      if (marker.equals(mCurrentMarker)) {
-        mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
-      }
-    }
-    mCurrentMarker = marker;
-
+    mMapPresenter.manageMarker(marker);
     return true;
   }
 
   @Override
   public void onMapClick(LatLng latLng) {
     mCurrentMarker = null;
-    // The BottomSheet is hidden when the user clicks on the map.
+    // The BranchContainer is hidden when the user clicks on the map.
+    hideBranchContainer();
+  }
+
+  @Override
+  public Marker getCurrentMarker() {
+    return mCurrentMarker;
+  }
+
+  @Override
+  public void setCurrentMarker(Marker marker) {
+    mCurrentMarker = marker;
+  }
+
+  @Override
+  public int getBranchContainerState() {
+    return mBranchContainer.getState();
+  }
+
+  @Override
+  public void setBranchContainerState(int newState) {
+    mBranchContainer.setState(newState);
+  }
+
+  @Override
+  public boolean hideBranchContainer() {
+    boolean wasBranchContainerHidden = false;
     if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
       mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
+      wasBranchContainerHidden = true;
     }
+    return wasBranchContainerHidden;
+  }
+
+  @Override
+  public boolean collapseBranchContainer() {
+    boolean wasBranchContainerCollapsed = false;
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_HIDDEN ||
+        mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
+      wasBranchContainerCollapsed = true;
+    }
+    return wasBranchContainerCollapsed;
+  }
+
+  @Override
+  public boolean expandBranchContainer() {
+    boolean wasBranchContainerExpanded = false;
+    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+      mBranchContainer.setState(BottomSheetBehavior.STATE_EXPANDED);
+      wasBranchContainerExpanded = true;
+    }
+    return wasBranchContainerExpanded;
+  }
+
+  @Override
+  public void hideBranchContainerClosing() {
+    ivBranchContainerClosing.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showBranchContainerClosing() {
+    ivBranchContainerClosing.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -310,19 +359,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @OnClick(R.id.ll_branch_header)
   public void onBranchHeaderClick() {
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_EXPANDED);
-    }
-    else if (mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    if (!expandBranchContainer()) {
+      collapseBranchContainer();
     }
   }
 
   @OnClick(R.id.iv_branch_container_closing)
   public void onBranchContainerClosingClick() {
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    }
+    collapseBranchContainer();
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

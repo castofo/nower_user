@@ -1,13 +1,16 @@
 package castofo.com.co.nower.location;
 
 import android.location.Location;
+import android.support.design.widget.BottomSheetBehavior;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import castofo.com.co.nower.models.Branch;
-import castofo.com.co.nower.network.ConnectivityInterceptor;
 
 import static castofo.com.co.nower.network.ConnectivityInterceptor.isInternetConnectionError;
 
@@ -20,9 +23,11 @@ public class MapPresenterImpl implements MapPresenter,
 
   private MapView mMapView;
   private MapInteractor mMapInteractor;
+  private Map<Marker, Branch> markerToBranchList;
 
   public MapPresenterImpl(MapView mapView) {
     this.mMapView = mapView;
+    markerToBranchList = new HashMap<>();
     this.mMapInteractor = new MapInteractorImpl(mMapView.getActivity());
   }
 
@@ -34,6 +39,51 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void requestLocationPermission() {
     mMapInteractor.requestLocationPermission();
+  }
+
+  @Override
+  public void transformBranchContainer(int state) {
+    if (mMapView != null) {
+      switch (state) {
+        case BottomSheetBehavior.STATE_COLLAPSED:
+          mMapView.hideBranchContainerClosing();
+          break;
+        case BottomSheetBehavior.STATE_EXPANDED:
+          // TODO Populate branch with its info.
+          mMapView.showBranchContainerClosing();
+          break;
+      }
+    }
+  }
+
+  @Override
+  public void manageMarker(Marker marker) {
+    if (mMapView != null) {
+      mMapView.animateCamera(marker.getPosition());
+      if (markerToBranchList.containsKey(marker)) {
+        switch (mMapView.getBranchContainerState()) {
+          case BottomSheetBehavior.STATE_HIDDEN:
+            mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+            mMapView.setCurrentMarker(marker);
+            break;
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            if (marker.equals(mMapView.getCurrentMarker())) {
+              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+              mMapView.setCurrentMarker(null);
+            }
+            else {
+              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+              mMapView.setCurrentMarker(marker);
+            }
+            break;
+        }
+      }
+      else {
+        // It happens when the user clicked his marker on the map.
+        mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+        mMapView.setCurrentMarker(null);
+      }
+    }
   }
 
   @Override
@@ -112,7 +162,7 @@ public class MapPresenterImpl implements MapPresenter,
       else {
         for (Branch branch : nearbyBranchList) {
           LatLng branchPosition = new LatLng(branch.getLatitude(), branch.getLongitude());
-          mMapView.addMarkerForBranch(branchPosition);
+          markerToBranchList.put(mMapView.addMarkerForBranch(branchPosition), branch);
         }
       }
       mMapView.finishProgress();

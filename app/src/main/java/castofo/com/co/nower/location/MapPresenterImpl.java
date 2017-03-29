@@ -2,6 +2,7 @@ package castofo.com.co.nower.location;
 
 import android.location.Location;
 import android.support.design.widget.BottomSheetBehavior;
+import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -46,11 +47,11 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
-          mMapView.hideBranchContainerClosing();
+          mMapView.setBranchContainerClosingVisibility(View.GONE);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
           // TODO Populate branch with its info.
-          mMapView.showBranchContainerClosing();
+          mMapView.setBranchContainerClosingVisibility(View.VISIBLE);
           break;
       }
     }
@@ -82,6 +83,36 @@ public class MapPresenterImpl implements MapPresenter,
         // It happens when the user clicked his marker on the map.
         mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
         mMapView.setCurrentMarker(null);
+      }
+    }
+  }
+
+  @Override
+  public void manageMapClick() {
+    if (mMapView != null) {
+      // The BranchContainer is hidden when the user clicks on the map and the current marker
+      // is set to null.
+      if (mMapView.getBranchContainerState() == BottomSheetBehavior.STATE_COLLAPSED) {
+        mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+      }
+      mMapView.setCurrentMarker(null);
+    }
+  }
+
+  /**
+   * Collapses or expands the Branch container according to the interaction with the header or the
+   * closing icon.
+   */
+  @Override
+  public void manageBranchHeaderInteraction() {
+    if (mMapView != null) {
+      switch (mMapView.getBranchContainerState()) {
+        case BottomSheetBehavior.STATE_COLLAPSED:
+          mMapView.setBranchContainerState(BottomSheetBehavior.STATE_EXPANDED);
+          break;
+        case BottomSheetBehavior.STATE_EXPANDED:
+            mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+          break;
       }
     }
   }

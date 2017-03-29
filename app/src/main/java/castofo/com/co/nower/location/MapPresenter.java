@@ -14,6 +14,10 @@ public interface MapPresenter {
   void transformBranchContainer(int state);
 
   void manageMarker(Marker marker);
+
+  void manageMapClick();
+
+  void manageBranchHeaderInteraction();
   
   void onDestroy();
 }

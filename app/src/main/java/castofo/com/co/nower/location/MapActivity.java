@@ -223,9 +223,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   @Override
   public void onMapClick(LatLng latLng) {
-    mCurrentMarker = null;
-    // The BranchContainer is hidden when the user clicks on the map.
-    hideBranchContainer();
+    mMapPresenter.manageMapClick();
   }
 
   @Override
@@ -249,44 +247,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public boolean hideBranchContainer() {
-    boolean wasBranchContainerHidden = false;
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_HIDDEN);
-      wasBranchContainerHidden = true;
-    }
-    return wasBranchContainerHidden;
-  }
-
-  @Override
-  public boolean collapseBranchContainer() {
-    boolean wasBranchContainerCollapsed = false;
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_HIDDEN ||
-        mBranchContainer.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_COLLAPSED);
-      wasBranchContainerCollapsed = true;
-    }
-    return wasBranchContainerCollapsed;
-  }
-
-  @Override
-  public boolean expandBranchContainer() {
-    boolean wasBranchContainerExpanded = false;
-    if (mBranchContainer.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-      mBranchContainer.setState(BottomSheetBehavior.STATE_EXPANDED);
-      wasBranchContainerExpanded = true;
-    }
-    return wasBranchContainerExpanded;
-  }
-
-  @Override
-  public void hideBranchContainerClosing() {
-    ivBranchContainerClosing.setVisibility(View.GONE);
-  }
-
-  @Override
-  public void showBranchContainerClosing() {
-    ivBranchContainerClosing.setVisibility(View.VISIBLE);
+  public void setBranchContainerClosingVisibility(int visibility) {
+    ivBranchContainerClosing.setVisibility(visibility);
   }
 
   @Override
@@ -359,14 +321,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @OnClick(R.id.ll_branch_header)
   public void onBranchHeaderClick() {
-    if (!expandBranchContainer()) {
-      collapseBranchContainer();
-    }
+    mMapPresenter.manageBranchHeaderInteraction();
   }
 
+  /**
+   * Collapses the Branch container after the user clicks on the closing icon.
+   */
   @OnClick(R.id.iv_branch_container_closing)
   public void onBranchContainerClosingClick() {
-    collapseBranchContainer();
+    mMapPresenter.manageBranchHeaderInteraction();
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

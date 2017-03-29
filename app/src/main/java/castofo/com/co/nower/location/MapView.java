@@ -38,15 +38,7 @@ public interface MapView {
 
   void setBranchContainerState(int newState);
 
-  boolean hideBranchContainer();
-
-  boolean collapseBranchContainer();
-
-  boolean expandBranchContainer();
-
-  void hideBranchContainerClosing();
-
-  void showBranchContainerClosing();
+  void setBranchContainerClosingVisibility(int visibility);
 
   void showLocationPermissionExplanation();
 

@@ -30,6 +30,8 @@ public interface MapView {
 
   void clearMap();
 
+  boolean onMarkerClick(Marker marker);
+
   Marker getCurrentMarker();
 
   void setCurrentMarker(Marker marker);

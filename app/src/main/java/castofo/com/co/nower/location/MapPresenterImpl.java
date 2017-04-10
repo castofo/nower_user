@@ -6,6 +6,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,12 @@ public class MapPresenterImpl implements MapPresenter,
   private MapView mMapView;
   private MapInteractor mMapInteractor;
   private Map<Marker, String> markerToBranchList;
+  private List<Marker> markerList;
 
   public MapPresenterImpl(MapView mapView) {
     this.mMapView = mapView;
     markerToBranchList = new LinkedHashMap<>();
+    markerList = new ArrayList<>();
     this.mMapInteractor = new MapInteractorImpl(mMapView.getActivity());
   }
 
@@ -46,10 +49,11 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
+          // TODO Populate branch with its basic info (use getCurrentMarker).
           mMapView.setBranchContainerClosingVisible(false);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
-          // TODO Populate branch with its info.
+          // TODO Populate branch with its full info and promos (use getCurrentMarker).
           mMapView.setBranchContainerClosingVisible(true);
           break;
       }
@@ -112,6 +116,23 @@ public class MapPresenterImpl implements MapPresenter,
         case BottomSheetBehavior.STATE_EXPANDED:
             mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
           break;
+      }
+    }
+  }
+
+  @Override
+  public void navigateOverBranchList(int direction) {
+    if (mMapView != null) {
+      int markerPosition = markerList.indexOf(mMapView.getCurrentMarker());
+      if (markerPosition != -1) {
+        // The current marker was found in the list.
+        int numbOfMarkers = markerList.size();
+        // The branches on the Branch container are supposed to loop in a circular way (i.e. there
+        // is no start or end branch).
+        Marker prevOrNextMarker = markerList
+            .get((numbOfMarkers + markerPosition + direction) % numbOfMarkers);
+        // Simulates a click on the marker.
+        mMapView.onMarkerClick(prevOrNextMarker);
       }
     }
   }
@@ -192,7 +213,9 @@ public class MapPresenterImpl implements MapPresenter,
       else {
         for (Branch branch : nearbyBranchList) {
           LatLng branchPosition = new LatLng(branch.getLatitude(), branch.getLongitude());
-          markerToBranchList.put(mMapView.addMarkerForBranch(branchPosition), branch.getId());
+          Marker markerForBranch = mMapView.addMarkerForBranch(branchPosition);
+          markerToBranchList.put(markerForBranch, branch.getId());
+          markerList.add(markerForBranch);
         }
       }
       mMapView.finishProgress();

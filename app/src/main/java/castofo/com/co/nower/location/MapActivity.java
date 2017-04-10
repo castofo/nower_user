@@ -211,6 +211,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mMap.clear();
   }
 
+  /**
+   * This method respects to two interfaces: {@link OnMarkerClickListener in Google} and
+   * {@link MapView}.
+   * @param marker The marker that was clicked or selected
+   * @return true
+   */
   @Override
   public boolean onMarkerClick(Marker marker) {
     Log.i(TAG, "A marker was clicked.");
@@ -319,6 +325,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @OnClick(R.id.fl_branch_header)
   public void onBranchHeaderClick() {
     mMapPresenter.manageBranchHeaderInteraction();
+  }
+
+  @OnClick(R.id.iv_branch_container_backward)
+  public void onBackwardNavigationControlClick() {
+    mMapPresenter.navigateOverBranchList(-1);
+  }
+
+  @OnClick(R.id.iv_branch_container_forward)
+  public void onForwardNavigationControlClick() {
+    mMapPresenter.navigateOverBranchList(1);
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

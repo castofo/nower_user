@@ -18,6 +18,8 @@ public interface MapPresenter {
   void manageMapClick();
 
   void manageBranchHeaderInteraction();
+
+  void navigateOverBranchList(int direction);
   
   void onDestroy();
 }

@@ -2,12 +2,11 @@ package castofo.com.co.nower.location;
 
 import android.location.Location;
 import android.support.design.widget.BottomSheetBehavior;
-import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +23,11 @@ public class MapPresenterImpl implements MapPresenter,
 
   private MapView mMapView;
   private MapInteractor mMapInteractor;
-  private Map<Marker, Branch> markerToBranchList;
+  private Map<Marker, String> markerToBranchList;
 
   public MapPresenterImpl(MapView mapView) {
     this.mMapView = mapView;
-    markerToBranchList = new HashMap<>();
+    markerToBranchList = new LinkedHashMap<>();
     this.mMapInteractor = new MapInteractorImpl(mMapView.getActivity());
   }
 
@@ -47,11 +46,11 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
-          mMapView.setBranchContainerClosingVisibility(View.GONE);
+          mMapView.setBranchContainerClosingVisible(false);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
           // TODO Populate branch with its info.
-          mMapView.setBranchContainerClosingVisibility(View.VISIBLE);
+          mMapView.setBranchContainerClosingVisible(true);
           break;
       }
     }
@@ -193,7 +192,7 @@ public class MapPresenterImpl implements MapPresenter,
       else {
         for (Branch branch : nearbyBranchList) {
           LatLng branchPosition = new LatLng(branch.getLatitude(), branch.getLongitude());
-          markerToBranchList.put(mMapView.addMarkerForBranch(branchPosition), branch);
+          markerToBranchList.put(mMapView.addMarkerForBranch(branchPosition), branch.getId());
         }
       }
       mMapView.finishProgress();

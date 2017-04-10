@@ -5,8 +5,17 @@ package castofo.com.co.nower.models;
  */
 public class Branch {
 
+  private String id;
   private double latitude;
   private double longitude;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public double getLatitude() {
     return latitude;

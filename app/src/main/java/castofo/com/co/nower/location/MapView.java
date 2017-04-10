@@ -38,7 +38,7 @@ public interface MapView {
 
   void setBranchContainerState(int newState);
 
-  void setBranchContainerClosingVisibility(int visibility);
+  void setBranchContainerClosingVisible(boolean showClosing);
 
   void showLocationPermissionExplanation();
 

@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,8 +56,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   FloatingActionButton fabRefresh;
   @BindView(R.id.ll_branch_container)
   LinearLayout llBranchContainer;
-  @BindView(R.id.iv_branch_container_closing)
-  AppCompatImageView ivBranchContainerClosing;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -247,8 +244,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public void setBranchContainerClosingVisibility(int visibility) {
-    ivBranchContainerClosing.setVisibility(visibility);
+  public void setBranchContainerClosingVisible(boolean showClosing) {
+    getSupportActionBar().setDisplayHomeAsUpEnabled(showClosing);
   }
 
   @Override
@@ -319,16 +316,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   /**
    * Expands the Branch container after the user clicks on the Branch header.
    */
-  @OnClick(R.id.ll_branch_header)
+  @OnClick(R.id.fl_branch_header)
   public void onBranchHeaderClick() {
-    mMapPresenter.manageBranchHeaderInteraction();
-  }
-
-  /**
-   * Collapses the Branch container after the user clicks on the closing icon.
-   */
-  @OnClick(R.id.iv_branch_container_closing)
-  public void onBranchContainerClosingClick() {
     mMapPresenter.manageBranchHeaderInteraction();
   }
 
@@ -378,6 +367,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        // Collapses the Branch container after the user clicks on the closing icon.
+        mMapPresenter.manageBranchHeaderInteraction();
+        break;
+    }
     return super.onOptionsItemSelected(item);
   }
 }

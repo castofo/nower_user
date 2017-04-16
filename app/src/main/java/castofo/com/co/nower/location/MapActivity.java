@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   FloatingActionButton fabRefresh;
   @BindView(R.id.ll_branch_container)
   LinearLayout llBranchContainer;
+  @BindView(R.id.iv_branch_container_backward)
+  AppCompatImageView ivBranchContainerBackward;
+  @BindView(R.id.iv_branch_container_forward)
+  AppCompatImageView ivBranchContainerForward;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -335,6 +340,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @OnClick(R.id.iv_branch_container_forward)
   public void onForwardNavigationControlClick() {
     mMapPresenter.navigateOverBranchList(1);
+  }
+
+  @Override
+  public void setNavigationControlsVisibility(int visibility) {
+    ivBranchContainerBackward.setVisibility(visibility);
+    ivBranchContainerForward.setVisibility(visibility);
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

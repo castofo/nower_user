@@ -2,6 +2,7 @@ package castofo.com.co.nower.location;
 
 import android.location.Location;
 import android.support.design.widget.BottomSheetBehavior;
+import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -49,11 +50,13 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
-          // TODO Populate branch with its basic info (use getCurrentMarker).
+          mMapView.setNavigationControlsVisibility(View.VISIBLE);
+          // TODO Populate branch with its basic info (use getCurrentMarker()).
           mMapView.setBranchContainerClosingVisible(false);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
-          // TODO Populate branch with its full info and promos (use getCurrentMarker).
+          mMapView.setNavigationControlsVisibility(View.GONE);
+          // TODO Populate branch with its full info and promos (use getCurrentMarker()).
           mMapView.setBranchContainerClosingVisible(true);
           break;
       }

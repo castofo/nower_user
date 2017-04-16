@@ -51,4 +51,6 @@ public interface MapView {
   void showGettingNearbyBranchesError();
 
   void showNoNearbyPromosMessage();
+
+  void setNavigationControlsVisibility(int visibility);
 }

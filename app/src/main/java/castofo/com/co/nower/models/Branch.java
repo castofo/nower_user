@@ -1,5 +1,7 @@
 package castofo.com.co.nower.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -14,6 +16,12 @@ public class Branch extends RealmObject {
   private String id;
   private double latitude;
   private double longitude;
+  private String name;
+  private String address;
+  @SerializedName("default_contact_info")
+  private boolean defaultContactInfo;
+
+  public Branch() {}
 
   public String getId() {
     return id;
@@ -37,5 +45,29 @@ public class Branch extends RealmObject {
 
   public void setLongitude(double longitude) {
     this.longitude = longitude;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public boolean isDefaultContactInfo() {
+    return defaultContactInfo;
+  }
+
+  public void setDefaultContactInfo(boolean defaultContactInfo) {
+    this.defaultContactInfo = defaultContactInfo;
   }
 }

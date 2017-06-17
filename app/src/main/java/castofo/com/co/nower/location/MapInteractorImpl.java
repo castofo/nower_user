@@ -26,18 +26,14 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.persistence.BranchPersistenceManager;
 import castofo.com.co.nower.network.ConnectivityInterceptor;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
@@ -284,9 +280,18 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
         .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
+          // The downloaded branches are stored locally.
+          BranchPersistenceManager.createBranchesInList(nearbyBranchList);
           listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
         }, throwable -> {
           listener.onGettingNearbyBranchesError(throwable);
         });
+  }
+
+  @Override
+  public void loadBranch(String branchId, OnBranchLoadedListener listener) {
+    // TODO do logic for loading process.
+    Branch branch = BranchPersistenceManager.retrieveBranch(branchId);
+    listener.onLoadingBranchSuccess(branch);
   }
 }

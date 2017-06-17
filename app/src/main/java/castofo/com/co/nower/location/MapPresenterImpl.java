@@ -2,6 +2,7 @@ package castofo.com.co.nower.location;
 
 import android.location.Location;
 import android.support.design.widget.BottomSheetBehavior;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -21,17 +22,19 @@ import static castofo.com.co.nower.network.ConnectivityInterceptor.isInternetCon
  */
 public class MapPresenterImpl implements MapPresenter,
     MapInteractor.OnLocationPermissionCheckedListener, MapInteractor.OnLocationChangedListener,
-    MapInteractor.OnBranchesReceivedListener {
+    MapInteractor.OnBranchesReceivedListener, MapInteractor.OnBranchLoadedListener {
+
+  private static final String TAG = MapPresenterImpl.class.getSimpleName();
 
   private MapView mMapView;
   private MapInteractor mMapInteractor;
-  private Map<Marker, String> markerToBranchList;
-  private List<Marker> markerList;
+  private Map<Marker, String> mMarkerToBranchList;
+  private List<Marker> mMarkerList;
 
   public MapPresenterImpl(MapView mapView) {
     this.mMapView = mapView;
-    markerToBranchList = new LinkedHashMap<>();
-    markerList = new ArrayList<>();
+    mMarkerToBranchList = new LinkedHashMap<>();
+    mMarkerList = new ArrayList<>();
     this.mMapInteractor = new MapInteractorImpl(mMapView.getActivity());
   }
 
@@ -51,8 +54,8 @@ public class MapPresenterImpl implements MapPresenter,
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
           mMapView.setNavigationControlsVisibility(View.VISIBLE);
-          // TODO Populate branch with its basic info (use getCurrentMarker()).
-          mMapView.setBranchContainerClosingVisible(false);
+          String currentBranchId = mMarkerToBranchList.get(mMapView.getCurrentMarker());
+          mMapInteractor.loadBranch(currentBranchId, this);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
           mMapView.setNavigationControlsVisibility(View.GONE);
@@ -67,28 +70,31 @@ public class MapPresenterImpl implements MapPresenter,
   public void manageMarker(Marker marker) {
     if (mMapView != null) {
       mMapView.animateCamera(marker.getPosition());
-      if (markerToBranchList.containsKey(marker)) {
+      if (mMarkerToBranchList.containsKey(marker)) {
         switch (mMapView.getBranchContainerState()) {
           case BottomSheetBehavior.STATE_HIDDEN:
-            mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
             mMapView.setCurrentMarker(marker);
+            mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
             break;
           case BottomSheetBehavior.STATE_COLLAPSED:
             if (marker.equals(mMapView.getCurrentMarker())) {
-              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
               mMapView.setCurrentMarker(null);
+              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
             }
             else {
-              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
               mMapView.setCurrentMarker(marker);
+              mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+              // A transition from STATE_COLLAPSED to STATE_COLLAPSED doesn't trigger the callback.
+              // Thus, the action of the callback has to be manually triggered.
+              transformBranchContainer(BottomSheetBehavior.STATE_COLLAPSED);
             }
             break;
         }
       }
       else {
         // It happens when the user clicked his marker on the map.
-        mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
         mMapView.setCurrentMarker(null);
+        mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
       }
     }
   }
@@ -96,12 +102,12 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void manageMapClick() {
     if (mMapView != null) {
-      // The BranchContainer is hidden when the user clicks on the map and the current marker
-      // is set to null.
+      // When the user clicks on the map the current marker is set to null and the BranchContainer
+      // is hidden.
+      mMapView.setCurrentMarker(null);
       if (mMapView.getBranchContainerState() == BottomSheetBehavior.STATE_COLLAPSED) {
         mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
       }
-      mMapView.setCurrentMarker(null);
     }
   }
 
@@ -126,13 +132,13 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void navigateOverBranchList(int direction) {
     if (mMapView != null) {
-      int markerPosition = markerList.indexOf(mMapView.getCurrentMarker());
+      int markerPosition = mMarkerList.indexOf(mMapView.getCurrentMarker());
       if (markerPosition != -1) {
         // The current marker was found in the list.
-        int numbOfMarkers = markerList.size();
+        int numbOfMarkers = mMarkerList.size();
         // The branches on the Branch container are supposed to loop in a circular way (i.e. there
         // is no start or end branch).
-        Marker prevOrNextMarker = markerList
+        Marker prevOrNextMarker = mMarkerList
             .get((numbOfMarkers + markerPosition + direction) % numbOfMarkers);
         // Simulates a click on the marker.
         mMapView.onMarkerClick(prevOrNextMarker);
@@ -217,11 +223,23 @@ public class MapPresenterImpl implements MapPresenter,
         for (Branch branch : nearbyBranchList) {
           LatLng branchPosition = new LatLng(branch.getLatitude(), branch.getLongitude());
           Marker markerForBranch = mMapView.addMarkerForBranch(branchPosition);
-          markerToBranchList.put(markerForBranch, branch.getId());
-          markerList.add(markerForBranch);
+          mMarkerToBranchList.put(markerForBranch, branch.getId());
+          mMarkerList.add(markerForBranch);
         }
       }
       mMapView.finishProgress();
     }
+  }
+
+  @Override
+  public void onLoadingBranchError() {
+    // TODO do something if the loading process failed.
+  }
+
+  @Override
+  public void onLoadingBranchSuccess(Branch loadedBranch) {
+    // TODO Populate branch with its basic info.
+    Log.i(TAG, "Branch name: " + loadedBranch.getName());
+    mMapView.setBranchContainerClosingVisible(false);
   }
 }

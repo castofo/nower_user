@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import castofo.com.co.nower.persistence.LocalMigrationManager;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -19,13 +20,11 @@ public class Nower extends Application {
 
     Realm.init(this);
 
-    /*
     RealmConfiguration config = new RealmConfiguration.Builder()
         .schemaVersion(0) // Must be manually bumped when the schema changes.
-        .migration(new MigrationManager())
+        .migration(new LocalMigrationManager())
         .build();
     Realm.setDefaultConfiguration(config);
-    */
 
     // Stetho initialization is needed to see the db on the Chrome inspector.
     Stetho.initialize(Stetho.newInitializerBuilder(this)

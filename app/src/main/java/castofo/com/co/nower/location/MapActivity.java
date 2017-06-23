@@ -45,8 +45,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     OnMapClickListener {
 
   private static final String TAG = MapActivity.class.getSimpleName();
-  private static final float ZOOM_LEVEL = 15f;
-  private static final float RADIUS = 1000;
+  private static final float ZOOM_LEVEL = 13.6f;
+  private static final float RADIUS = 2500;
   private static final float STROKE_WIDTH = 1f;
 
   @BindView(R.id.map)

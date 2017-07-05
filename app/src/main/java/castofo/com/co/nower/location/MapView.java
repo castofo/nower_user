@@ -5,6 +5,8 @@ import android.app.Activity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import castofo.com.co.nower.models.Branch;
+
 /**
  * Created by Alejandro on 19/09/2016.
  */
@@ -53,4 +55,6 @@ public interface MapView {
   void showNoNearbyPromosMessage();
 
   void setNavigationControlsVisibility(int visibility);
+
+  void populateBranchInfo(Branch branch);
 }

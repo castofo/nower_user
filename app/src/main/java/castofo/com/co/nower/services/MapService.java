@@ -14,5 +14,6 @@ public interface MapService {
 
   @GET("/v1/branches")
   Observable<List<Branch>> getNearbyBranches(@Query("latitude") double latitude,
-                                             @Query("longitude") double longitude);
+                                             @Query("longitude") double longitude,
+                                             @Query("expand") String store);
 }

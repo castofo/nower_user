@@ -25,6 +25,6 @@ public class BranchPersistenceManager {
   public static Branch retrieveBranch(String branchId) {
     Realm realm = Realm.getDefaultInstance();
     Branch branch = realm.where(Branch.class).equalTo("id", branchId).findFirst();
-    return realm.copyFromRealm(branch);
+    return branch != null ? realm.copyFromRealm(branch) : null;
   }
 }

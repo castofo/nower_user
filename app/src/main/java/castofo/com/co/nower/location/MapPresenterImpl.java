@@ -238,8 +238,10 @@ public class MapPresenterImpl implements MapPresenter,
 
   @Override
   public void onLoadingBranchSuccess(Branch loadedBranch) {
-    // TODO Populate branch with its basic info.
-    Log.i(TAG, "Branch name: " + loadedBranch.getName());
-    mMapView.setBranchContainerClosingVisible(false);
+    if (mMapView != null) {
+      Log.i(TAG, "Branch name: " + loadedBranch.getName());
+      mMapView.populateBranchInfo(loadedBranch);
+      mMapView.setBranchContainerClosingVisible(false);
+    }
   }
 }

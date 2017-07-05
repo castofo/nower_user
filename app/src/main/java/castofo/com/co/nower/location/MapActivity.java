@@ -12,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import castofo.com.co.nower.R;
+import castofo.com.co.nower.models.Branch;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CODE;
@@ -61,6 +63,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatImageView ivBranchContainerBackward;
   @BindView(R.id.iv_branch_container_forward)
   AppCompatImageView ivBranchContainerForward;
+  @BindView(R.id.tv_branch_header_title)
+  AppCompatTextView tvBranchHeaderTitle;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -346,6 +350,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void setNavigationControlsVisibility(int visibility) {
     ivBranchContainerBackward.setVisibility(visibility);
     ivBranchContainerForward.setVisibility(visibility);
+  }
+  /**
+   * Populates the Branch container using the information about the Branch and its corresponding
+   * Store.
+   */
+  @Override
+  public void populateBranchInfo(Branch branch) {
+    tvBranchHeaderTitle.setText(branch.getName());
+    // TODO keep populating the Branch container.
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -53,5 +53,6 @@
 
   <style name="BranchHeaderTitle">
     <item name="android:textColor">@color/white</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
   </style>
 </resources>

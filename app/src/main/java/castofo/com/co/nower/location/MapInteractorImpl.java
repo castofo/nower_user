@@ -28,8 +28,9 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
-import castofo.com.co.nower.persistence.BranchPersistenceManager;
 import castofo.com.co.nower.network.ConnectivityInterceptor;
+import castofo.com.co.nower.persistence.BranchPersistenceManager;
+import castofo.com.co.nower.persistence.StorePersistenceManager;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
@@ -276,12 +277,17 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   @Override
   public void getNearbyBranches(double latitude, double longitude,
                                 final OnBranchesReceivedListener listener) {
-    mMapService.getNearbyBranches(latitude, longitude)
+    // The "store" parameter is used to include the corresponding store in each nearby branch.
+    mMapService.getNearbyBranches(latitude, longitude, "store")
         .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
         .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
           // The downloaded branches are stored locally.
           BranchPersistenceManager.createBranchesInList(nearbyBranchList);
+          // The corresponding store for each downloaded branch is stored locally.
+          for (Branch branch : nearbyBranchList) {
+            StorePersistenceManager.createStore(branch.getStore());
+          }
           listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
         }, throwable -> {
           listener.onGettingNearbyBranchesError(throwable);
@@ -290,8 +296,12 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
 
   @Override
   public void loadBranch(String branchId, OnBranchLoadedListener listener) {
-    // TODO do logic for loading process.
     Branch branch = BranchPersistenceManager.retrieveBranch(branchId);
-    listener.onLoadingBranchSuccess(branch);
+    if (branch != null) {
+      listener.onLoadingBranchSuccess(branch);
+    }
+    else {
+      listener.onLoadingBranchError();
+    }
   }
 }

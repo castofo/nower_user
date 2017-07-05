@@ -34,11 +34,12 @@
       android:orientation="vertical">
 
       <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_branch_header_title"
         style="@style/BranchHeaderTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="TITLE"/>
+        android:text="@string/placeholder_title"/>
 
     </LinearLayout>
 

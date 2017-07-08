@@ -33,5 +33,18 @@ public class LocalMigrationManager implements RealmMigration {
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");
     }
+
+    // The description, nit, website, address and status attributes were added to the Store model.
+    if (oldVersion == 1) {
+      schema.get("Store")
+          .addField("description", String.class)
+          .addField("nit", String.class)
+          .addField("website", String.class)
+          .addField("address", String.class)
+          .addField("status", String.class);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
   }
 }

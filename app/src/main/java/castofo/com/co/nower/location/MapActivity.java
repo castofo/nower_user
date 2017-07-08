@@ -357,7 +357,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @Override
   public void populateBranchInfo(Branch branch) {
-    tvBranchHeaderTitle.setText(branch.getName());
+    tvBranchHeaderTitle.setText(branch.getStore().getName());
     // TODO keep populating the Branch container.
   }
 

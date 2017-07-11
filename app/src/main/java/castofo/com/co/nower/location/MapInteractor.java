@@ -36,7 +36,7 @@ public interface MapInteractor {
 
   interface OnBranchLoadedListener {
 
-    void onLoadingBranchError();
+    void onLoadingBranchError(Throwable throwable);
 
     void onLoadingBranchSuccess(Branch loadedBranch);
   }

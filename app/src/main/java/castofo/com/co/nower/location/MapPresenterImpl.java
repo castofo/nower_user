@@ -232,8 +232,18 @@ public class MapPresenterImpl implements MapPresenter,
   }
 
   @Override
-  public void onLoadingBranchError() {
-    // TODO do something if the loading process failed.
+  public void onLoadingBranchError(Throwable throwable) {
+    if (mMapView != null) {
+      // The current marker is set to null and the Branch container is closed immediately.
+      mMapView.setCurrentMarker(null);
+      mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+      if (isInternetConnectionError(throwable)) {
+        mMapView.showNoInternetError();
+      }
+      else {
+        mMapView.showLoadingBranchError();
+      }
+    }
   }
 
   @Override

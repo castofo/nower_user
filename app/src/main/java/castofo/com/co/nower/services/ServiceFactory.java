@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -20,7 +20,7 @@ public class ServiceFactory {
 
     private String mBaseUrl;
     private List<Interceptor> mInterceptors;
-    // private Authenticator mAuthenticator;
+    // private Authenticator mAuthenticator; //TODO
     private int mTimeoutInSeconds;
 
     public Builder() {
@@ -77,7 +77,7 @@ public class ServiceFactory {
       return new Retrofit.Builder()
           .baseUrl(mBaseUrl)
           .addConverterFactory(GsonConverterFactory.create())
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+          .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
           .client(createClient())
           .build()
           .create(serviceClass);

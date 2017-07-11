@@ -56,5 +56,7 @@ public interface MapView {
 
   void setNavigationControlsVisibility(int visibility);
 
+  void showLoadingBranchError();
+
   void populateBranchInfo(Branch branch);
 }

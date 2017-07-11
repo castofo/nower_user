@@ -351,6 +351,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     ivBranchContainerBackward.setVisibility(visibility);
     ivBranchContainerForward.setVisibility(visibility);
   }
+
+  @Override
+  public void showLoadingBranchError() {
+    Snackbar.make(mapFragmentView, getResources().getString(R.string.error_loading_branch),
+        Snackbar.LENGTH_LONG).show();
+  }
+
   /**
    * Populates the Branch container using the information about the Branch and its corresponding
    * Store.

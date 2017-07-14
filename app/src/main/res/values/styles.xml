@@ -51,8 +51,14 @@
     <item name="android:src">@mipmap/ic_chevron_right_white_24dp</item>
   </style>
 
-  <style name="BranchHeaderTitle">
+  <style name="StoreName">
     <item name="android:textColor">@color/white</item>
     <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="BranchName">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
   </style>
 </resources>

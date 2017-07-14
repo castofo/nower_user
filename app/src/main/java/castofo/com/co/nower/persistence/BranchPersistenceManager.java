@@ -20,7 +20,7 @@ public class BranchPersistenceManager {
 
   public static void createBranch(Branch branch) {
     Realm realm = Realm.getDefaultInstance();
-    realm.executeTransactionAsync(realmInstance -> realmInstance.copyToRealmOrUpdate(branch));
+    realm.executeTransaction(realmInstance -> realmInstance.copyToRealmOrUpdate(branch));
   }
 
   /**

@@ -31,15 +31,28 @@
       android:layout_height="match_parent"
       android:layout_marginEnd="@dimen/navigation_controls_width"
       android:layout_marginStart="@dimen/navigation_controls_width"
+      android:gravity="center"
       android:orientation="vertical">
 
       <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_branch_header_title"
-        style="@style/BranchHeaderTitle"
+        android:id="@+id/tv_store_name"
+        style="@style/StoreName"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="1"
         android:text="@string/placeholder_title"/>
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_branch_name"
+        style="@style/BranchName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/placeholder_subtitle"/>
 
     </LinearLayout>
 

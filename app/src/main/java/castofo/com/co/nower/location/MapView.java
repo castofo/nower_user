@@ -59,4 +59,8 @@ public interface MapView {
   void showLoadingBranchError();
 
   void populateBranchInfo(Branch branch);
+
+  void expandStoreAndBranchName();
+
+  void collapseStoreAndBranchName();
 }

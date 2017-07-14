@@ -54,13 +54,16 @@ public class MapPresenterImpl implements MapPresenter,
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
           mMapView.setNavigationControlsVisibility(View.VISIBLE);
+          mMapView.collapseStoreAndBranchName();
+          mMapView.setBranchContainerClosingVisible(false);
           String currentBranchId = mMarkerToBranchList.get(mMapView.getCurrentMarker());
           mMapInteractor.loadBranch(currentBranchId, this);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
           mMapView.setNavigationControlsVisibility(View.GONE);
-          // TODO Populate branch with its full info and promos (use getCurrentMarker()).
+          mMapView.expandStoreAndBranchName();
           mMapView.setBranchContainerClosingVisible(true);
+          // TODO Populate branch with its full info and promos (use getCurrentMarker()).
           break;
       }
     }
@@ -216,6 +219,9 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void onGettingNearbyBranchesSuccess(List<Branch> nearbyBranchList) {
     if (mMapView != null) {
+      // The map and the list have to be cleared so that they contain only the updated data.
+      mMarkerToBranchList.clear();
+      mMarkerList.clear();
       if (nearbyBranchList.isEmpty()) {
         mMapView.showNoNearbyPromosMessage();
       }
@@ -251,7 +257,6 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       Log.i(TAG, "Branch name: " + loadedBranch.getName());
       mMapView.populateBranchInfo(loadedBranch);
-      mMapView.setBranchContainerClosingVisible(false);
     }
   }
 }

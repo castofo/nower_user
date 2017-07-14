@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,8 +64,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatImageView ivBranchContainerBackward;
   @BindView(R.id.iv_branch_container_forward)
   AppCompatImageView ivBranchContainerForward;
-  @BindView(R.id.tv_branch_header_title)
-  AppCompatTextView tvBranchHeaderTitle;
+  @BindView(R.id.tv_store_name)
+  AppCompatTextView tvStoreName;
+  @BindView(R.id.tv_branch_name)
+  AppCompatTextView tvBranchName;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -364,8 +367,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @Override
   public void populateBranchInfo(Branch branch) {
-    tvBranchHeaderTitle.setText(branch.getStore().getName());
+    tvStoreName.setText(branch.getStore().getName());
+    tvBranchName.setText(branch.getName());
     // TODO keep populating the Branch container.
+  }
+
+  /**
+   * Expands the Store and Branch names to show them completely.
+   */
+  @Override
+  public void expandStoreAndBranchName() {
+    tvStoreName.setMaxLines(Integer.MAX_VALUE);
+    tvBranchName.setMaxLines(Integer.MAX_VALUE);
+  }
+
+  /**
+   * Collapses the Store and Branch names to show them in just one line with ellipsis, if necessary.
+   */
+  @Override
+  public void collapseStoreAndBranchName() {
+    tvStoreName.setMaxLines(1);
+    tvStoreName.setEllipsize(TextUtils.TruncateAt.END);
+    tvBranchName.setMaxLines(1);
+    tvBranchName.setEllipsize(TextUtils.TruncateAt.END);
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

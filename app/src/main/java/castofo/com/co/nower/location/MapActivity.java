@@ -38,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import castofo.com.co.nower.R;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Store;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CODE;
@@ -68,6 +69,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatTextView tvStoreName;
   @BindView(R.id.tv_branch_name)
   AppCompatTextView tvBranchName;
+  @BindView(R.id.tv_branch_description)
+  AppCompatTextView tvBranchDescription;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -367,8 +370,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @Override
   public void populateBranchInfo(Branch branch) {
-    tvStoreName.setText(branch.getStore().getName());
+    Store branchStore = branch.getStore();
+    tvStoreName.setText(branchStore.getName());
     tvBranchName.setText(branch.getName());
+    tvBranchDescription.setText(branchStore.getDescription());
     // TODO keep populating the Branch container.
   }
 

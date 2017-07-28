@@ -61,4 +61,33 @@
     <item name="android:textColor">@color/white</item>
     <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
   </style>
+
+  <style name="BranchDescriptionSection">
+    <item name="android:background">@color/white</item>
+  </style>
+
+  <style name="BranchAvailabilitySection">
+    <item name="android:background">@color/light_green</item>
+  </style>
+
+  <style name="BranchContactInfoSection">
+    <item name="android:background">@color/light_blue</item>
+  </style>
+
+  <style name="BranchPromosSection">
+    <item name="android:background">@color/colorAccent</item>
+  </style>
+
+  <style name="SectionHeading">
+    <item name="android:textStyle">bold</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+  </style>
+
+  <style name="GoToStoreButton">
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="BranchDescription">
+    <item name="android:textColor">@color/black</item>
+  </style>
 </resources>

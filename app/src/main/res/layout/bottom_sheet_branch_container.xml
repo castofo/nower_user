@@ -72,12 +72,93 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatTextView
+    <LinearLayout
+      android:id="@+id/ll_branch_description_section"
+      style="@style/BranchDescriptionSection"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:gravity="center"
-      android:text="CONTENT"
-      android:textColor="@color/black"/>
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="@dimen/branch_section_padding">
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/SectionHeading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/label_description"/>
+
+      <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_branch_description"
+        style="@style/BranchDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/branch_description_vertical_padding"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/branch_description_vertical_padding"
+        android:text="DESCRIPTION TEXT"/>
+
+      <android.support.v7.widget.AppCompatButton
+        style="@style/GoToStoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/action_go_to_store"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/ll_branch_availability_section"
+      style="@style/BranchAvailabilitySection"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="@dimen/branch_section_padding">
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/SectionHeading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/label_availability"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/ll_branch_contact_info_section"
+      style="@style/BranchContactInfoSection"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="@dimen/branch_section_padding">
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/SectionHeading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/label_contact_info"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/ll_branch_promos_section"
+      style="@style/BranchPromosSection"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="@dimen/branch_section_padding">
+
+      <android.support.v7.widget.AppCompatTextView
+        style="@style/SectionHeading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/label_promos"/>
+
+    </LinearLayout>
 
   </LinearLayout>
 

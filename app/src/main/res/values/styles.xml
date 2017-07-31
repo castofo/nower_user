@@ -83,11 +83,16 @@
     <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
   </style>
 
-  <style name="GoToStoreButton">
+  <style name="SeeStoreButton">
     <item name="android:textStyle">bold</item>
   </style>
 
   <style name="BranchDescription">
     <item name="android:textColor">@color/black</item>
+  </style>
+
+  <style name="BranchStatus">
+    <item name="android:textColor">@color/black</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
   </style>
 </resources>

@@ -3,6 +3,7 @@ package castofo.com.co.nower.location;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -71,12 +72,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatTextView tvBranchName;
   @BindView(R.id.tv_branch_description)
   AppCompatTextView tvBranchDescription;
+  @BindView(R.id.tv_branch_status)
+  AppCompatTextView tvBranchStatus;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
   // The BottomSheet contains the information of every branch on the map.
   private BottomSheetBehavior mBranchContainer;
   private Marker mCurrentMarker;
+  private Branch mCurrentBranch;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -370,10 +374,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @Override
   public void populateBranchInfo(Branch branch) {
+    // The current Branch is updated.
+    mCurrentBranch = branch;
+
     Store branchStore = branch.getStore();
     tvStoreName.setText(branchStore.getName());
     tvBranchName.setText(branch.getName());
     tvBranchDescription.setText(branchStore.getDescription());
+    // Underlines the Branch status.
+    tvBranchStatus.setPaintFlags(tvBranchStatus.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     // TODO keep populating the Branch container.
   }
 
@@ -395,6 +404,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     tvStoreName.setEllipsize(TextUtils.TruncateAt.END);
     tvBranchName.setMaxLines(1);
     tvBranchName.setEllipsize(TextUtils.TruncateAt.END);
+  }
+
+  /**
+   * Shows a dialog containing the opening times of the selected Branch.
+   */
+  @OnClick(R.id.tv_branch_status)
+  public void onBranchStatusClick() {
+    DialogFragment branchOpeningTimes = DialogCreatorHelper
+        .newInstance(R.string.label_opening_times, 0, R.string.action_ok, 0, null, true);
+    branchOpeningTimes.show(getSupportFragmentManager(),
+        getResources().getString(R.string.label_opening_times));
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

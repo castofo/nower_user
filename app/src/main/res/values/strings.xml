@@ -33,4 +33,6 @@
   <string name="label_contact_info">Contact info</string>
   <string name="label_promos">Promos</string>
   <string name="label_opening_times">Opening times</string>
+  <string name="placeholder_no_description">No description.</string>
+  <string name="placeholder_no_information">No information</string>
 </resources>

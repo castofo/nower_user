@@ -66,116 +66,170 @@
 
   </FrameLayout>
 
-  <LinearLayout
-    style="@style/BranchContentBottomSheet"
+  <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
-      android:id="@+id/ll_branch_description_section"
-      style="@style/BranchDescriptionSection"
+      style="@style/BranchContentBottomSheet"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="@dimen/branch_section_padding">
+      android:layout_height="match_parent"
+      android:orientation="vertical">
 
-      <android.support.v7.widget.AppCompatTextView
-        style="@style/SectionHeading"
+      <LinearLayout
+        android:id="@+id/ll_branch_description_section"
+        style="@style/BranchDescriptionSection"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/label_description"/>
-
-      <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_branch_description"
-        style="@style/BranchDescription"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/branch_description_vertical_padding"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/branch_description_vertical_padding"
-        android:text="DESCRIPTION TEXT"/>
-
-      <android.support.v7.widget.AppCompatButton
-        style="@style/SeeStoreButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/action_see_store"/>
+        android:orientation="vertical"
+        android:padding="@dimen/branch_section_padding">
+
+        <android.support.v7.widget.AppCompatTextView
+          style="@style/SectionHeading"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="@string/label_description"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_description"
+          style="@style/BranchDescription"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingBottom="@dimen/branch_description_vertical_padding"
+          android:paddingEnd="@dimen/activity_horizontal_margin"
+          android:paddingLeft="@dimen/activity_horizontal_margin"
+          android:paddingRight="@dimen/activity_horizontal_margin"
+          android:paddingStart="@dimen/activity_horizontal_margin"
+          android:paddingTop="@dimen/branch_description_vertical_padding"
+          android:text="@string/placeholder_no_description"/>
+
+        <android.support.v7.widget.AppCompatButton
+          style="@style/SeeStoreButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:text="@string/action_see_store"/>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/ll_branch_availability_section"
+        style="@style/BranchAvailabilitySection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/branch_section_padding">
+
+        <android.support.v7.widget.AppCompatTextView
+          style="@style/SectionHeading"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="@string/label_availability"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_status"
+          style="@style/BranchStatus"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:clickable="true"
+          android:gravity="center"
+          android:onClick="onBranchStatusClick"
+          android:paddingBottom="@dimen/branch_description_vertical_padding"
+          android:paddingEnd="@dimen/activity_horizontal_margin"
+          android:paddingLeft="@dimen/activity_horizontal_margin"
+          android:paddingRight="@dimen/activity_horizontal_margin"
+          android:paddingStart="@dimen/activity_horizontal_margin"
+          android:paddingTop="@dimen/branch_description_vertical_padding"
+          android:text="@string/placeholder_no_information"/>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/ll_branch_contact_info_section"
+        style="@style/BranchContactInfoSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/branch_section_padding">
+
+        <android.support.v7.widget.AppCompatTextView
+          style="@style/SectionHeading"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="@string/label_contact_info"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_web_site"
+          style="@style/BranchContactInfoWebSite"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_facebook"
+          style="@style/BranchContactInfoFacebook"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_instagram"
+          style="@style/BranchContactInfoInstagram"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_whatsapp"
+          style="@style/BranchContactInfoWhatsApp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_phone"
+          style="@style/BranchContactInfoPhone"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+        <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_branch_contact_info_email"
+          style="@style/BranchContactInfoEmail"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/branch_contact_info_item_padding"
+          android:text="@string/placeholder_no_information"/>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/ll_branch_promos_section"
+        style="@style/BranchPromosSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/branch_section_padding">
+
+        <android.support.v7.widget.AppCompatTextView
+          style="@style/SectionHeading"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="@string/label_promos"/>
+
+      </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-      android:id="@+id/ll_branch_availability_section"
-      style="@style/BranchAvailabilitySection"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="@dimen/branch_section_padding">
-
-      <android.support.v7.widget.AppCompatTextView
-        style="@style/SectionHeading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/label_availability"/>
-
-      <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_branch_status"
-        style="@style/BranchStatus"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:gravity="center"
-        android:onClick="onBranchStatusClick"
-        android:paddingBottom="@dimen/branch_description_vertical_padding"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/branch_description_vertical_padding"
-        android:text="STATUS"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-      android:id="@+id/ll_branch_contact_info_section"
-      style="@style/BranchContactInfoSection"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="@dimen/branch_section_padding">
-
-      <android.support.v7.widget.AppCompatTextView
-        style="@style/SectionHeading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/label_contact_info"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-      android:id="@+id/ll_branch_promos_section"
-      style="@style/BranchPromosSection"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:padding="@dimen/branch_section_padding">
-
-      <android.support.v7.widget.AppCompatTextView
-        style="@style/SectionHeading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/label_promos"/>
-
-    </LinearLayout>
-
-  </LinearLayout>
+  </ScrollView>
 
 </LinearLayout>

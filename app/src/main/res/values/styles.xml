@@ -95,4 +95,34 @@
     <item name="android:textColor">@color/black</item>
     <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
   </style>
+
+  <style name="BranchContactInfoPhone">
+    <item name="android:drawableLeft">@mipmap/ic_phone_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoWebSite">
+    <item name="android:drawableLeft">@mipmap/ic_web_site_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoFacebook">
+    <item name="android:drawableLeft">@mipmap/ic_facebook_box_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoInstagram">
+    <item name="android:drawableLeft">@mipmap/ic_instagram_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoWhatsApp">
+    <item name="android:drawableLeft">@mipmap/ic_whatsapp_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoEmail">
+    <item name="android:drawableLeft">@mipmap/ic_email_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
 </resources>

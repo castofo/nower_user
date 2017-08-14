@@ -46,7 +46,7 @@ import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CO
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapView,
-    DialogCreatorHelper.DialogCreatorListener, FABProgressListener, OnMarkerClickListener,
+    DialogCreatorHelper.Callback, FABProgressListener, OnMarkerClickListener,
     OnMapClickListener {
 
   private static final String TAG = MapActivity.class.getSimpleName();
@@ -275,16 +275,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   @Override
   public void showLocationPermissionExplanation() {
-    DialogFragment locationPermissionExplanationDialog = DialogCreatorHelper
-        .newInstance(R.string.label_location_permission, R.string.message_location_needed,
-                     R.string.action_ok, 0, null, false);
+    DialogCreatorHelper locationPermissionExplanationDialog = new DialogCreatorHelper
+        .Builder(getApplicationContext())
+        .withTitleRes(R.string.label_location_permission)
+        .withMessageRes(R.string.message_location_needed)
+        .withPositiveBtnTextRes(R.string.action_ok)
+        .withCallback(this)
+        .withBooleanArg(DialogCreatorHelper.IS_CANCELABLE_KEY, false)
+        .create();
+
     locationPermissionExplanationDialog
         .show(getSupportFragmentManager(),
               getResources().getString(R.string.label_location_permission));
   }
 
   @Override
-  public void onDialogPositiveClick(DialogFragment dialog) {
+  public void onDialogPositiveBtnClick(DialogFragment dialog, Bundle params) {
     Log.i(TAG, "The user clicked the positive action.");
     String dialogTag = dialog.getTag();
     if (dialogTag.equals(getResources().getString(R.string.label_location_permission))) {
@@ -293,7 +299,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public void onDialogNegativeClick(DialogFragment dialog) {
+  public void onDialogNegativeBtnClick(DialogFragment dialog, Bundle params) {
     Log.i(TAG, "The user clicked the negative action.");
   }
 
@@ -331,9 +337,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
   @Override
   public void showNoNearbyPromosMessage() {
-    DialogFragment noNearbyPromosDialog = DialogCreatorHelper
-        .newInstance(R.string.label_we_are_sorry, R.string.message_no_nearby_promos,
-                     R.string.action_ok, 0, null, true);
+    DialogCreatorHelper noNearbyPromosDialog = new DialogCreatorHelper
+        .Builder(getApplicationContext())
+        .withTitleRes(R.string.label_we_are_sorry)
+        .withMessageRes(R.string.message_no_nearby_promos)
+        .withPositiveBtnTextRes(R.string.action_ok)
+        .withCallback(this)
+        .withBooleanArg(DialogCreatorHelper.IS_CANCELABLE_KEY, true)
+        .create();
+
     noNearbyPromosDialog.show(getSupportFragmentManager(),
                               getResources().getString(R.string.label_we_are_sorry));
   }
@@ -411,10 +423,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    */
   @OnClick(R.id.tv_branch_status)
   public void onBranchStatusClick() {
-    DialogFragment branchOpeningTimes = DialogCreatorHelper
-        .newInstance(R.string.label_opening_times, 0, R.string.action_ok, 0, null, true);
-    branchOpeningTimes.show(getSupportFragmentManager(),
-        getResources().getString(R.string.label_opening_times));
+    DialogCreatorHelper branchOpeningTimesDialog = new DialogCreatorHelper
+        .Builder(getApplicationContext())
+        .withTitleRes(R.string.label_opening_times)
+        .withMessage("Opening times message.")
+        .withPositiveBtnTextRes(R.string.action_ok)
+        .withCallback(this)
+        .withBooleanArg(DialogCreatorHelper.IS_CANCELABLE_KEY, true)
+        .create();
+
+    branchOpeningTimesDialog.show(getSupportFragmentManager(),
+                                  getResources().getString(R.string.label_opening_times));
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

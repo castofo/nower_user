@@ -139,12 +139,15 @@ public class MapPresenterImpl implements MapPresenter,
       if (markerPosition != -1) {
         // The current marker was found in the list.
         int numbOfMarkers = mMarkerList.size();
-        // The branches on the Branch container are supposed to loop in a circular way (i.e. there
-        // is no start or end branch).
-        Marker prevOrNextMarker = mMarkerList
-            .get((numbOfMarkers + markerPosition + direction) % numbOfMarkers);
-        // Simulates a click on the marker.
-        mMapView.onMarkerClick(prevOrNextMarker);
+
+        if (numbOfMarkers > 1) {
+          // The branches on the Branch container are supposed to loop in a circular way (i.e. there
+          // is no start or end branch).
+          Marker prevOrNextMarker = mMarkerList
+              .get((numbOfMarkers + markerPosition + direction) % numbOfMarkers);
+          // Simulates a click on the marker.
+          mMapView.onMarkerClick(prevOrNextMarker);
+        }
       }
     }
   }

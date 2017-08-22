@@ -269,8 +269,9 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   @Override
   public void getNearbyBranches(double latitude, double longitude,
                                 final OnBranchesReceivedListener listener) {
-    // The "store" parameter is used to include the corresponding Store in each nearby Branch.
-    mMapService.getNearbyBranches(latitude, longitude, "store")
+    // The "store" and "contact_informations" parameters are used to include the corresponding
+    // Store and ContactInformation in each nearby Branch.
+    mMapService.getNearbyBranches(latitude, longitude, "store,contact_informations")
         .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
         .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
@@ -307,8 +308,9 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
    * @return A {@link Single<Branch>} that will emit the result.
    */
   private Single<Branch> getBranch(String branchId) {
-    // The "store" parameter is used to include the corresponding Store in the Branch.
-    return mMapService.getBranch(branchId, "store")
+    // The "store" and "contact_informations" parameters are used to include the corresponding
+    // Store and ContactInformation in the Branch.
+    return mMapService.getBranch(branchId, "store,contact_informations")
         // The downloaded Branch and its corresponding Store are stored locally.
         .doOnSuccess(branch -> BranchPersistenceManager.createBranch(branch));
   }

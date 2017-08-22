@@ -2,6 +2,7 @@ package castofo.com.co.nower.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -21,6 +22,8 @@ public class Branch extends RealmObject {
   @SerializedName("default_contact_info")
   private boolean defaultContactInfo;
   private Store store;
+  @SerializedName("contact_informations")
+  private RealmList<ContactInformation> contactInformations;
 
   public Branch() {}
 
@@ -78,5 +81,13 @@ public class Branch extends RealmObject {
 
   public void setStore(Store store) {
     this.store = store;
+  }
+
+  public RealmList<ContactInformation> getContactInformations() {
+    return contactInformations;
+  }
+
+  public void setContactInformations(RealmList<ContactInformation> contactInformations) {
+    this.contactInformations = contactInformations;
   }
 }

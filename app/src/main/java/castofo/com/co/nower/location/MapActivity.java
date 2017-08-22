@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.github.jorgecastilloprz.listeners.FABProgressListener;
@@ -39,8 +40,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import castofo.com.co.nower.R;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.ContactInformation;
 import castofo.com.co.nower.models.Store;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
+import io.realm.RealmList;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CODE;
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
@@ -74,6 +77,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatTextView tvBranchDescription;
   @BindView(R.id.tv_branch_status)
   AppCompatTextView tvBranchStatus;
+  @BindView(R.id.sv_branch_content)
+  ScrollView svBranchContent;
+  @BindView(R.id.tv_branch_contact_info_web_site)
+  AppCompatTextView tvBranchContactInfoWebSite;
+  @BindView(R.id.tv_branch_contact_info_facebook)
+  AppCompatTextView tvBranchContactInfoFacebook;
+  @BindView(R.id.tv_branch_contact_info_instagram)
+  AppCompatTextView tvBranchContactInfoInstagram;
+  @BindView(R.id.tv_branch_contact_info_whatsapp)
+  AppCompatTextView tvBranchContactInfoWhatsApp;
+  @BindView(R.id.tv_branch_contact_info_phone)
+  AppCompatTextView tvBranchContactInfoPhone;
+  @BindView(R.id.tv_branch_contact_info_email)
+  AppCompatTextView tvBranchContactInfoEmail;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -389,13 +406,48 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // The current Branch is updated.
     mCurrentBranch = branch;
 
+    // Scrolls the Branch content to the top.
+    svBranchContent.fullScroll(ScrollView.FOCUS_UP);
+
     Store branchStore = branch.getStore();
     tvStoreName.setText(branchStore.getName());
     tvBranchName.setText(branch.getName());
     tvBranchDescription.setText(branchStore.getDescription());
     // Underlines the Branch status.
     tvBranchStatus.setPaintFlags(tvBranchStatus.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+    populateBranchContacInfo(branch.getContactInformations());
     // TODO keep populating the Branch container.
+  }
+
+  /**
+   * Populates every item in the ContactInfo section of a particular Branch according to the found
+   * keys.
+   *
+   * @param contactInformationList The ContactInformations of a particular Branch.
+   */
+  public void populateBranchContacInfo(RealmList<ContactInformation> contactInformationList) {
+    for (ContactInformation contactInformation : contactInformationList) {
+      switch (contactInformation.getKey()) {
+        case "website":
+          tvBranchContactInfoWebSite.setText(contactInformation.getValue());
+          break;
+        case "facebook":
+          tvBranchContactInfoFacebook.setText(contactInformation.getValue());
+          break;
+        case "instagram":
+          tvBranchContactInfoInstagram.setText(contactInformation.getValue());
+          break;
+        case "whatsapp":
+          tvBranchContactInfoWhatsApp.setText(contactInformation.getValue());
+          break;
+        case "phone":
+          tvBranchContactInfoPhone.setText(contactInformation.getValue());
+          break;
+        case "email":
+          tvBranchContactInfoEmail.setText(contactInformation.getValue());
+          break;
+      }
+    }
   }
 
   /**

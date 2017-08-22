@@ -46,5 +46,31 @@ public class LocalMigrationManager implements RealmMigration {
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");
     }
+
+    // The ContactInformation model was created and added as a field to the Branch model.
+    if (oldVersion == 2) {
+      schema.create("ContactInformation")
+          .addField("id", String.class, FieldAttribute.PRIMARY_KEY, FieldAttribute.REQUIRED)
+          .addField("key", String.class)
+          .addField("value", String.class)
+          .addField("storeId", String.class);
+      RealmObjectSchema branchSchema = schema.get("Branch");
+      branchSchema.addRealmObjectField("contactInformation", schema.get("ContactInformation"));
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
+
+    // The ContactInformation field of the Branch model was replaced by a List of
+    // ContactInformations.
+    if (oldVersion == 3) {
+      RealmObjectSchema contactInformation = schema.get("ContactInformation");
+      schema.get("Branch")
+          .removeField("contactInformation")
+          .addRealmListField("contactInformations", contactInformation);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
   }
 }

@@ -21,7 +21,7 @@ public class Nower extends Application {
     Realm.init(this);
 
     RealmConfiguration config = new RealmConfiguration.Builder()
-        .schemaVersion(2) // Must be manually bumped when the schema changes.
+        .schemaVersion(4) // Must be manually bumped when the schema changes.
         .migration(new LocalMigrationManager())
         .build();
     Realm.setDefaultConfiguration(config);

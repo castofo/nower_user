@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
@@ -78,7 +79,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @BindView(R.id.tv_branch_status)
   AppCompatTextView tvBranchStatus;
   @BindView(R.id.sv_branch_content)
-  ScrollView svBranchContent;
+  NestedScrollView nsvBranchContent;
   @BindView(R.id.tv_branch_contact_info_web_site)
   AppCompatTextView tvBranchContactInfoWebSite;
   @BindView(R.id.tv_branch_contact_info_facebook)
@@ -407,7 +408,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mCurrentBranch = branch;
 
     // Scrolls the Branch content to the top.
-    svBranchContent.fullScroll(ScrollView.FOCUS_UP);
+    nsvBranchContent.fullScroll(ScrollView.FOCUS_UP);
 
     Store branchStore = branch.getStore();
     tvStoreName.setText(branchStore.getName());

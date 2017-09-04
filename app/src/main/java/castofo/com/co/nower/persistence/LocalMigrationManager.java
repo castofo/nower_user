@@ -72,5 +72,21 @@ public class LocalMigrationManager implements RealmMigration {
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");
     }
+
+    // The Promo model was created.
+    if (oldVersion == 4) {
+      schema.create("Promo")
+          .addField("id", String.class, FieldAttribute.PRIMARY_KEY, FieldAttribute.REQUIRED)
+          .addField("name", String.class)
+          .addField("description", String.class)
+          .addField("terms", String.class)
+          .addField("stock", Integer.class)
+          .addField("price", Float.class)
+          .addField("startDate", String.class)
+          .addField("endDate", String.class);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
   }
 }

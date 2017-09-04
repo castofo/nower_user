@@ -24,5 +24,15 @@
   <string name="action_ok">Ok</string>
   <string name="message_location_needed">We need to use your location to find the best promos for you.</string>
   <string name="label_location_permission">Location permission</string>
-
+  <string name="placeholder_title">Title</string>
+  <string name="error_loading_branch">An error occurred while loading the branch</string>
+  <string name="placeholder_subtitle">Subtitle</string>
+  <string name="action_see_store">See store</string>
+  <string name="label_description">Description</string>
+  <string name="label_availability">Availability</string>
+  <string name="label_contact_info">Contact info</string>
+  <string name="label_promos">Promos</string>
+  <string name="label_opening_times">Opening times</string>
+  <string name="placeholder_no_description">No description.</string>
+  <string name="placeholder_no_information">No information</string>
 </resources>

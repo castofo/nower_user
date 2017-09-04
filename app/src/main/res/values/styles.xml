@@ -1,5 +1,4 @@
 <resources>
-
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <!-- Customize your theme here. -->
@@ -36,4 +35,94 @@
     <item name="android:src">@mipmap/ic_refresh_white_24dp</item>
   </style>
 
+  <style name="BranchHeaderBottomSheet">
+    <item name="android:background">@color/colorPrimary</item>
+  </style>
+
+  <style name="BranchContentBottomSheet">
+    <item name="android:background">@color/white</item>
+  </style>
+
+  <style name="BranchHeaderBackward">
+    <item name="android:src">@mipmap/ic_chevron_left_white_24dp</item>
+  </style>
+
+  <style name="BranchHeaderForward">
+    <item name="android:src">@mipmap/ic_chevron_right_white_24dp</item>
+  </style>
+
+  <style name="StoreName">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="BranchName">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+  </style>
+
+  <style name="BranchDescriptionSection">
+    <item name="android:background">@color/white</item>
+  </style>
+
+  <style name="BranchAvailabilitySection">
+    <item name="android:background">@color/light_green</item>
+  </style>
+
+  <style name="BranchContactInfoSection">
+    <item name="android:background">@color/light_blue</item>
+  </style>
+
+  <style name="BranchPromosSection">
+    <item name="android:background">@color/colorAccent</item>
+  </style>
+
+  <style name="SectionHeading">
+    <item name="android:textStyle">bold</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+  </style>
+
+  <style name="SeeStoreButton">
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="BranchDescription">
+    <item name="android:textColor">@color/black</item>
+  </style>
+
+  <style name="BranchStatus">
+    <item name="android:textColor">@color/black</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+  </style>
+
+  <style name="BranchContactInfoPhone">
+    <item name="android:drawableLeft">@mipmap/ic_phone_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoWebSite">
+    <item name="android:drawableLeft">@mipmap/ic_web_site_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoFacebook">
+    <item name="android:drawableLeft">@mipmap/ic_facebook_box_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoInstagram">
+    <item name="android:drawableLeft">@mipmap/ic_instagram_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoWhatsApp">
+    <item name="android:drawableLeft">@mipmap/ic_whatsapp_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
+
+  <style name="BranchContactInfoEmail">
+    <item name="android:drawableLeft">@mipmap/ic_email_black_24dp</item>
+    <item name="android:drawablePadding">@dimen/branch_contact_info_drawable_padding</item>
+  </style>
 </resources>

@@ -34,6 +34,13 @@ public interface MapInteractor {
     void onGettingNearbyBranchesSuccess(List<Branch> nearbyBranchList);
   }
 
+  interface OnBranchLoadedListener {
+
+    void onLoadingBranchError(Throwable throwable);
+
+    void onLoadingBranchSuccess(Branch loadedBranch);
+  }
+
   void checkLocationPermission(OnLocationPermissionCheckedListener listener);
 
   void requestLocationPermission();
@@ -41,4 +48,6 @@ public interface MapInteractor {
   void getLocation(OnLocationChangedListener listener);
 
   void getNearbyBranches(double latitude, double longitude, OnBranchesReceivedListener listener);
+
+  void loadBranch(String branchId, OnBranchLoadedListener listener);
 }

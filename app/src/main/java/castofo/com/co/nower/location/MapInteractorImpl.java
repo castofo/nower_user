@@ -26,19 +26,16 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
 import castofo.com.co.nower.network.ConnectivityInterceptor;
+import castofo.com.co.nower.persistence.BranchPersistenceManager;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.PERMISSION_ACCESS_FINE_LOCATION_CODE;
 
@@ -77,16 +74,14 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         != PackageManager.PERMISSION_GRANTED) {
       if (ActivityCompat
           .shouldShowRequestPermissionRationale(mActivity,
-                                                Manifest.permission.ACCESS_FINE_LOCATION)) {
+              Manifest.permission.ACCESS_FINE_LOCATION)) {
         // An explanation for this permission has to be shown to the user.
         listener.onLocationPermissionExplanationNeeded();
-      }
-      else {
+      } else {
         // No explanation is needed and the permission can be requested.
         listener.onRequestLocationPermissionNeeded();
       }
-    }
-    else {
+    } else {
       listener.onLocationPermissionGranted();
     }
   }
@@ -95,7 +90,7 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   public void requestLocationPermission() {
     ActivityCompat
         .requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            PERMISSION_ACCESS_FINE_LOCATION_CODE);
+            PERMISSION_ACCESS_FINE_LOCATION_CODE);
   }
 
   @Override
@@ -137,8 +132,8 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   }
 
   protected synchronized void checkLocationSettings() {
-   mResult = LocationServices.SettingsApi
-       .checkLocationSettings(mGoogleApiClient, mLocationSettingsRequest);
+    mResult = LocationServices.SettingsApi
+        .checkLocationSettings(mGoogleApiClient, mLocationSettingsRequest);
   }
 
   public void connectGoogleApiClient() {
@@ -159,18 +154,16 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
       try {
         // Starts an Activity that tries to resolve the error.
         connectionResult.startResolutionForResult(mActivity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-      }
-      catch (IntentSender.SendIntentException sie) {
+      } catch (IntentSender.SendIntentException sie) {
         Log.i(TAG, "Location services connection failed.");
         sie.printStackTrace();
         disconnectGoogleApiClient();
         notifyLocationUnavailability();
       }
-    }
-    else {
+    } else {
       // The error has no resolution.
       Log.i(TAG, "Location services connection failed with code " + connectionResult
-            .getErrorCode() + ".");
+          .getErrorCode() + ".");
       disconnectGoogleApiClient();
       notifyLocationUnavailability();
     }
@@ -199,8 +192,7 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
           // Shows the dialog by calling startResolutionForResult() and checks the result in
           // onActivityResult().
           status.startResolutionForResult(mActivity, RequestCodeHelper.ENABLE_GPS_REQUEST_CODE);
-        }
-        catch (IntentSender.SendIntentException e) {
+        } catch (IntentSender.SendIntentException e) {
           notifyLocationUnavailability();
         }
         break;
@@ -224,21 +216,18 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
       if (location != null) {
         disconnectGoogleApiClient();
         notifyLocationAvailability(location);
-      }
-      else {
+      } else {
         Log.i(TAG, "Location is null.");
         if (isGpsEnabled()) {
           LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                                                                   mLocationRequest, this);
-        }
-        else {
+              mLocationRequest, this);
+        } else {
           Log.i(TAG, "The GPS has to be enabled.");
           disconnectGoogleApiClient();
           notifyLocationUnavailability();
         }
       }
-    }
-    else {
+    } else {
       disconnectGoogleApiClient();
       notifyLocationUnavailability();
     }
@@ -280,13 +269,49 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
   @Override
   public void getNearbyBranches(double latitude, double longitude,
                                 final OnBranchesReceivedListener listener) {
-    mMapService.getNearbyBranches(latitude, longitude)
-        .subscribeOn(Schedulers.newThread()) // TODO improve with the better way
-        .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way
+    // The "store" and "contact_informations" parameters are used to include the corresponding
+    // Store and ContactInformation in each nearby Branch.
+    mMapService.getNearbyBranches(latitude, longitude, "store,contact_informations")
+        .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
+        .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
+          // The downloaded Branches and their corresponding Stores are stored locally.
+          BranchPersistenceManager.createBranchesInList(nearbyBranchList);
           listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
         }, throwable -> {
           listener.onGettingNearbyBranchesError(throwable);
         });
+  }
+
+  @Override
+  public void loadBranch(String branchId, OnBranchLoadedListener listener) {
+    Single<Branch> cachedBranch = BranchPersistenceManager.retrieveBranch(branchId)
+        .subscribeOn(Schedulers.io());
+
+    Single<Branch> remoteBranch = getBranch(branchId).subscribeOn(Schedulers.newThread());
+
+    // Tries to get the Branch from the local db first and, if it was not possible to retrieve it,
+    // makes a request to the remote db in order to get the specified Branch.
+    Single.concat(cachedBranch, remoteBranch)
+        .observeOn(AndroidSchedulers.mainThread())
+        // It is satisfied with the first result in which the Branch id is not null.
+        .filter(branch -> branch.getId() != null)
+        .firstElement()
+        .subscribe(branch -> listener.onLoadingBranchSuccess(branch),
+            throwable -> listener.onLoadingBranchError(throwable));
+  }
+
+  /**
+   * Retrieves the Branch from the remote db for the given id.
+   *
+   * @param branchId The id of the Branch to be retrieved.
+   * @return A {@link Single<Branch>} that will emit the result.
+   */
+  private Single<Branch> getBranch(String branchId) {
+    // The "store" and "contact_informations" parameters are used to include the corresponding
+    // Store and ContactInformation in the Branch.
+    return mMapService.getBranch(branchId, "store,contact_informations")
+        // The downloaded Branch and its corresponding Store are stored locally.
+        .doOnSuccess(branch -> BranchPersistenceManager.createBranch(branch));
   }
 }

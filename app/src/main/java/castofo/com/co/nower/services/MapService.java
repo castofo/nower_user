@@ -3,9 +3,10 @@ package castofo.com.co.nower.services;
 import java.util.List;
 
 import castofo.com.co.nower.models.Branch;
+import io.reactivex.Single;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Created by Alejandro on 10/01/2017.
@@ -13,6 +14,11 @@ import rx.Observable;
 public interface MapService {
 
   @GET("/v1/branches")
-  Observable<List<Branch>> getNearbyBranches(@Query("latitude") double latitude,
-                                             @Query("longitude") double longitude);
+  Single<List<Branch>> getNearbyBranches(@Query("latitude") double latitude,
+                                         @Query("longitude") double longitude,
+                                         @Query("expand") String expand);
+
+  @GET("/v1/branches/{id}")
+  Single<Branch> getBranch(@Path("id") String branchId,
+                           @Query("expand") String expand);
 }

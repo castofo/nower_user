@@ -63,4 +63,8 @@ public interface MapView {
   void expandStoreAndBranchName();
 
   void collapseStoreAndBranchName();
+
+  void showLoadingBranchPromosError();
+
+  void hideLoadingBranchPromosProgress();
 }

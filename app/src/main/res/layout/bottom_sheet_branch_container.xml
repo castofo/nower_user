@@ -230,7 +230,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/branch_section_padding">
+        android:paddingTop="@dimen/branch_section_padding">
 
         <android.support.v7.widget.AppCompatTextView
           style="@style/SectionHeading"
@@ -238,6 +238,23 @@
           android:layout_height="match_parent"
           android:gravity="center"
           android:text="@string/label_promos"/>
+
+        <LinearLayout
+          android:id="@+id/ll_branch_promos_progress_section"
+          style="@style/BranchPromosProgressSection"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/branch_section_padding"
+          android:orientation="vertical">
+
+          <ProgressBar
+            android:id="@+id/pb_branch_promos_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible"/>
+
+        </LinearLayout>
 
       </LinearLayout>
 

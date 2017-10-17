@@ -2,6 +2,8 @@ package castofo.com.co.nower.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -24,6 +26,7 @@ public class Branch extends RealmObject {
   private Store store;
   @SerializedName("contact_informations")
   private RealmList<ContactInformation> contactInformations;
+  private RealmList<Promo> promos;
 
   public Branch() {}
 
@@ -89,5 +92,23 @@ public class Branch extends RealmObject {
 
   public void setContactInformations(RealmList<ContactInformation> contactInformations) {
     this.contactInformations = contactInformations;
+  }
+
+  public RealmList<Promo> getPromos() {
+    return promos;
+  }
+
+  public void setPromos(RealmList<Promo> promos) {
+    this.promos = promos;
+  }
+
+  /**
+   * Replaces the Branch Promos with the items on the given list.
+   *
+   * @param promoList The Promo list with the updated items.
+   */
+  public void replacePromos(List<Promo> promoList) {
+    this.promos.clear();
+    this.promos.addAll(promoList);
   }
 }

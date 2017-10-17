@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.github.jorgecastilloprz.FABProgressCircle;
@@ -92,6 +93,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatTextView tvBranchContactInfoPhone;
   @BindView(R.id.tv_branch_contact_info_email)
   AppCompatTextView tvBranchContactInfoEmail;
+  @BindView(R.id.pb_branch_promos_progress)
+  ProgressBar pbBranchPromosProgress;
 
   private GoogleMap mMap;
   private MapPresenter mMapPresenter;
@@ -417,7 +420,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // Underlines the Branch status.
     tvBranchStatus.setPaintFlags(tvBranchStatus.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     populateBranchContacInfo(branch.getContactInformations());
-    // TODO keep populating the Branch container.
   }
 
   /**
@@ -469,6 +471,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     tvStoreName.setEllipsize(TextUtils.TruncateAt.END);
     tvBranchName.setMaxLines(1);
     tvBranchName.setEllipsize(TextUtils.TruncateAt.END);
+  }
+
+  @Override
+  public void showLoadingBranchPromosError() {
+    Snackbar.make(mapFragmentView, getResources().getString(R.string.error_loading_branch_promos),
+        Snackbar.LENGTH_LONG).show();
+  }
+
+  @Override
+  public void hideLoadingBranchPromosProgress() {
+    pbBranchPromosProgress.setVisibility(View.GONE);
   }
 
   /**

@@ -5,6 +5,7 @@ import android.location.Location;
 import java.util.List;
 
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Promo;
 
 /**
  * Created by Alejandro on 01/10/2016.
@@ -41,6 +42,13 @@ public interface MapInteractor {
     void onLoadingBranchSuccess(Branch loadedBranch);
   }
 
+  interface OnBranchPromosLoadedListener {
+
+    void onLoadingBranchPromosError(Throwable throwable);
+
+    void onLoadingBranchPromosSuccess(String branchId, List<Promo> branchPromoList);
+  }
+
   void checkLocationPermission(OnLocationPermissionCheckedListener listener);
 
   void requestLocationPermission();
@@ -50,4 +58,6 @@ public interface MapInteractor {
   void getNearbyBranches(double latitude, double longitude, OnBranchesReceivedListener listener);
 
   void loadBranch(String branchId, OnBranchLoadedListener listener);
+
+  void loadBranchPromos(String branchId, OnBranchPromosLoadedListener listener);
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Promo;
 
 import static castofo.com.co.nower.network.ConnectivityInterceptor.isInternetConnectionError;
 
@@ -22,7 +23,8 @@ import static castofo.com.co.nower.network.ConnectivityInterceptor.isInternetCon
  */
 public class MapPresenterImpl implements MapPresenter,
     MapInteractor.OnLocationPermissionCheckedListener, MapInteractor.OnLocationChangedListener,
-    MapInteractor.OnBranchesReceivedListener, MapInteractor.OnBranchLoadedListener {
+    MapInteractor.OnBranchesReceivedListener, MapInteractor.OnBranchLoadedListener,
+    MapInteractor.OnBranchPromosLoadedListener {
 
   private static final String TAG = MapPresenterImpl.class.getSimpleName();
 
@@ -51,12 +53,13 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void transformBranchContainer(int state) {
     if (mMapView != null) {
+      String currentBranchId;
       switch (state) {
         case BottomSheetBehavior.STATE_COLLAPSED:
           mMapView.setNavigationControlsVisibility(View.VISIBLE);
           mMapView.collapseStoreAndBranchName();
           mMapView.setBranchContainerClosingVisible(false);
-          String currentBranchId = mMarkerToBranchList.get(mMapView.getCurrentMarker());
+          currentBranchId = mMarkerToBranchList.get(mMapView.getCurrentMarker());
           mMapInteractor.loadBranch(currentBranchId, this);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
@@ -64,6 +67,8 @@ public class MapPresenterImpl implements MapPresenter,
           mMapView.expandStoreAndBranchName();
           mMapView.setBranchContainerClosingVisible(true);
           // TODO Populate branch with its full info and promos (use getCurrentMarker()).
+          currentBranchId = mMarkerToBranchList.get(mMapView.getCurrentMarker());
+          mMapInteractor.loadBranchPromos(currentBranchId, this);
           break;
       }
     }
@@ -260,6 +265,42 @@ public class MapPresenterImpl implements MapPresenter,
     if (mMapView != null) {
       Log.i(TAG, "Branch name: " + loadedBranch.getName());
       mMapView.populateBranchInfo(loadedBranch);
+    }
+  }
+
+  @Override
+  public void onLoadingBranchPromosError(Throwable throwable) {
+    if (mMapView != null) {
+      // The current marker is set to null and the Branch container is closed immediately.
+      mMapView.setCurrentMarker(null);
+      mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+      if (isInternetConnectionError(throwable)) {
+        mMapView.showNoInternetError();
+      }
+      else {
+        mMapView.showLoadingBranchPromosError();
+      }
+    }
+  }
+
+  @Override
+  public void onLoadingBranchPromosSuccess(String branchId, List<Promo> branchPromoList) {
+    if (mMapView != null) {
+      Marker currentMarker = mMapView.getCurrentMarker();
+      if (currentMarker != null && branchId.equals(mMarkerToBranchList.get(currentMarker))) {
+        // The user is currently watching the same Branch from which he requested the Promo list.
+        if (branchPromoList.isEmpty()) {
+          // mMapView.showNoBranchPromosMessage();
+          Log.i(TAG, "showNoBranchPromosMessage");
+        }
+        else {
+          for (Promo promo : branchPromoList) {
+            // mMapView.addPromoToBranch(promo);
+            Log.i(TAG, "showNoBranchPromosMessage");
+          }
+        }
+        mMapView.hideLoadingBranchPromosProgress();
+      }
     }
   }
 }

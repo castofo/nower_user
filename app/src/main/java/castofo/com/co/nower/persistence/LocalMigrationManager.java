@@ -88,5 +88,15 @@ public class LocalMigrationManager implements RealmMigration {
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");
     }
+
+    // A list of Promos was added to the Branch model.
+    if (oldVersion == 5) {
+      RealmObjectSchema promo = schema.get("Promo");
+      schema.get("Branch")
+          .addRealmListField("promos", promo);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
   }
 }

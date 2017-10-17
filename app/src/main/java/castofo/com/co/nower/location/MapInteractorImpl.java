@@ -26,10 +26,14 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+import java.util.List;
+
 import castofo.com.co.nower.BuildConfig;
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Promo;
 import castofo.com.co.nower.network.ConnectivityInterceptor;
 import castofo.com.co.nower.persistence.BranchPersistenceManager;
+import castofo.com.co.nower.persistence.PromoPersistenceManager;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
@@ -313,5 +317,40 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     return mMapService.getBranch(branchId, "store,contact_informations")
         // The downloaded Branch and its corresponding Store are stored locally.
         .doOnSuccess(branch -> BranchPersistenceManager.createBranch(branch));
+  }
+
+  // TODO Implement PromoPersistenceManager to retrieve Branch Promo list with expiration.
+  @Override
+  public void loadBranchPromos(String branchId, OnBranchPromosLoadedListener listener) {
+    Single<List<Promo>> cachedBranchPromos = PromoPersistenceManager.retrieveBranchPromos(branchId)
+        .subscribeOn(Schedulers.io());
+
+    Single<List<Promo>> remoteBranchPromos = getBranchPromos(branchId)
+        .subscribeOn(Schedulers.newThread());
+
+    // Tries to get the Branch Promos from the local db first and, if it was not possible to
+    // retrieve them, makes a request to the remote db in order to get the Promos of the specified
+    // Branch.
+    Single.concat(cachedBranchPromos, remoteBranchPromos)
+        .observeOn(AndroidSchedulers.mainThread())
+        // It is satisfied with the first result in which the Branch Promo list is not empty.
+        .filter(branchPromoList -> !branchPromoList.isEmpty())
+        .firstElement()
+        .subscribe(branchPromoList -> listener.onLoadingBranchPromosSuccess(branchId,
+            branchPromoList),
+            throwable -> listener.onLoadingBranchPromosError(throwable));
+  }
+
+  /**
+   * Retrieves the Branch Promos from the remote db for the given id.
+   *
+   * @param branchId The id of the Branch for which the Promos will be retrieved.
+   * @return A {@link Single<List<Promo>>} that will emit the result.
+   */
+  private Single<List<Promo>> getBranchPromos(String branchId) {
+    return mMapService.getBranchPromos(branchId)
+        // The downloaded Branch Promos are stored locally.
+        .doOnSuccess(branchPromoList -> PromoPersistenceManager
+            .createBranchPromos(branchId, branchPromoList));
   }
 }

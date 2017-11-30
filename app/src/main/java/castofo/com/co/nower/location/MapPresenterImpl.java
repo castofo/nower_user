@@ -290,13 +290,13 @@ public class MapPresenterImpl implements MapPresenter,
       if (currentMarker != null && branchId.equals(mMarkerToBranchList.get(currentMarker))) {
         // The user is currently watching the same Branch from which he requested the Promo list.
         if (branchPromoList.isEmpty()) {
-          // mMapView.showNoBranchPromosMessage();
+          // mMapView.showNoBranchPromosMessage(); TODO
           Log.i(TAG, "showNoBranchPromosMessage");
         }
         else {
           for (Promo promo : branchPromoList) {
-            // mMapView.addPromoToBranch(promo);
-            Log.i(TAG, "showNoBranchPromosMessage");
+            // mMapView.addPromoToBranch(promo); TODO
+            Log.i(TAG, "addPromoToBranch(promo)");
           }
         }
         mMapView.hideLoadingBranchPromosProgress();

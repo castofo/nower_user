@@ -419,7 +419,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     tvBranchDescription.setText(branchStore.getDescription());
     // Underlines the Branch status.
     tvBranchStatus.setPaintFlags(tvBranchStatus.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-    populateBranchContacInfo(branch.getContactInformations());
+    populateBranchContactInfo(branch.getContactInformations());
   }
 
   /**
@@ -428,7 +428,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
    *
    * @param contactInformationList The ContactInformations of a particular Branch.
    */
-  public void populateBranchContacInfo(RealmList<ContactInformation> contactInformationList) {
+  public void populateBranchContactInfo(RealmList<ContactInformation> contactInformationList) {
     for (ContactInformation contactInformation : contactInformationList) {
       switch (contactInformation.getKey()) {
         case "website":

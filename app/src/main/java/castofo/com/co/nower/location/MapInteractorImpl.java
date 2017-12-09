@@ -279,6 +279,8 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
         .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
+          // Deletes all previously stored Branches.
+          BranchPersistenceManager.deleteAllBranches();
           // The downloaded Branches and their corresponding Stores are stored locally.
           BranchPersistenceManager.createBranchesInList(nearbyBranchList);
           listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
@@ -319,7 +321,6 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         .doOnSuccess(branch -> BranchPersistenceManager.createBranch(branch));
   }
 
-  // TODO Implement PromoPersistenceManager to retrieve Branch Promo list with expiration.
   @Override
   public void loadBranchPromos(String branchId, OnBranchPromosLoadedListener listener) {
     Single<List<Promo>> cachedBranchPromos = PromoPersistenceManager.retrieveBranchPromos(branchId)
@@ -336,9 +337,11 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         // It is satisfied with the first result in which the Branch Promo list is not empty.
         .filter(branchPromoList -> !branchPromoList.isEmpty())
         .firstElement()
-        .subscribe(branchPromoList -> listener.onLoadingBranchPromosSuccess(branchId,
-            branchPromoList),
-            throwable -> listener.onLoadingBranchPromosError(throwable));
+        .subscribe(branchPromoList -> {
+          // The loaded Branch Promos are stored locally.
+          PromoPersistenceManager.createBranchPromos(branchId, branchPromoList);
+          listener.onLoadingBranchPromosSuccess(branchId, branchPromoList);
+        }, throwable -> listener.onLoadingBranchPromosError(throwable));
   }
 
   /**
@@ -348,9 +351,6 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
    * @return A {@link Single<List<Promo>>} that will emit the result.
    */
   private Single<List<Promo>> getBranchPromos(String branchId) {
-    return mMapService.getBranchPromos(branchId)
-        // The downloaded Branch Promos are stored locally.
-        .doOnSuccess(branchPromoList -> PromoPersistenceManager
-            .createBranchPromos(branchId, branchPromoList));
+    return mMapService.getBranchPromos(branchId);
   }
 }

@@ -42,6 +42,7 @@ public class PromoPersistenceManager {
       Realm realm = Realm.getDefaultInstance();
       RealmResults<Promo> branchPromos = realm.where(Promo.class).equalTo("branches.id", branchId)
           .findAll();
+      // TODO filter Promos before retrieving the list and delete the inactive ones from Realm.
       return !branchPromos.isEmpty() ? realm.copyFromRealm(branchPromos) : new ArrayList<Promo>();
     });
   }

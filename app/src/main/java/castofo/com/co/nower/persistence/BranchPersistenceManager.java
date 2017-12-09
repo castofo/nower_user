@@ -3,8 +3,10 @@ package castofo.com.co.nower.persistence;
 import java.util.List;
 
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Promo;
 import io.reactivex.Single;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by alejandrosanchezaristizabal on 6/17/17.
@@ -35,6 +37,14 @@ public class BranchPersistenceManager {
       Realm realm = Realm.getDefaultInstance();
       Branch branch = realm.where(Branch.class).equalTo("id", branchId).findFirst();
       return branch != null ? realm.copyFromRealm(branch) : new Branch();
+    });
+  }
+
+  public static void deleteAllBranches() {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(realmInstance -> {
+      RealmResults<Branch> branches = realm.where(Branch.class).findAll();
+      branches.deleteAllFromRealm();
     });
   }
 }

@@ -3,7 +3,6 @@ package castofo.com.co.nower.persistence;
 import java.util.List;
 
 import castofo.com.co.nower.models.Branch;
-import castofo.com.co.nower.models.Promo;
 import io.reactivex.Single;
 import io.realm.Realm;
 import io.realm.RealmResults;

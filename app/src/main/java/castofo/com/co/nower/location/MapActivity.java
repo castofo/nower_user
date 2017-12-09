@@ -217,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void addMarkerForUser(LatLng userPosition) {
     MarkerOptions markerOptions = new MarkerOptions();
     markerOptions.position(userPosition)
-                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
     mMap.addMarker(markerOptions);
   }
 
@@ -239,10 +239,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void showRange(LatLng userPosition) {
     CircleOptions circleOptions = new CircleOptions();
     circleOptions.center(userPosition)
-                 .radius(RADIUS)
-                 .strokeWidth(STROKE_WIDTH)
-                 .strokeColor(ContextCompat.getColor(this, R.color.dark_blue_transparent))
-                 .fillColor(ContextCompat.getColor(this, R.color.blue_transparent));
+        .radius(RADIUS)
+        .strokeWidth(STROKE_WIDTH)
+        .strokeColor(ContextCompat.getColor(this, R.color.dark_blue_transparent))
+        .fillColor(ContextCompat.getColor(this, R.color.blue_transparent));
     mMap.addCircle(circleOptions);
   }
 
@@ -254,6 +254,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   /**
    * This method respects to two interfaces: {@link OnMarkerClickListener in Google} and
    * {@link MapView}.
+   *
    * @param marker The marker that was clicked or selected
    * @return true
    */
@@ -307,7 +308,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     locationPermissionExplanationDialog
         .show(getSupportFragmentManager(),
-              getResources().getString(R.string.label_location_permission));
+            getResources().getString(R.string.label_location_permission));
   }
 
   @Override
@@ -328,7 +329,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void showGettingLocationError() {
     Snackbar gettingLocationErrorSnackbar = Snackbar
         .make(mapFragmentView, getResources().getString(R.string.error_getting_location),
-              Snackbar.LENGTH_LONG);
+            Snackbar.LENGTH_LONG);
     gettingLocationErrorSnackbar.setAction(getResources().getString(R.string.action_retry),
         view -> {
           // Retries to get the user's location.
@@ -340,14 +341,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public void showNoInternetError() {
     Snackbar.make(mapFragmentView, getResources().getString(R.string.error_no_internet),
-                  Snackbar.LENGTH_LONG).show();
+        Snackbar.LENGTH_LONG).show();
   }
 
   @Override
   public void showGettingNearbyBranchesError() {
     Snackbar gettingNearbyPromosErrorSnackbar = Snackbar
         .make(mapFragmentView, getResources().getString(R.string.error_getting_nearby_promos),
-              Snackbar.LENGTH_LONG);
+            Snackbar.LENGTH_LONG);
     gettingNearbyPromosErrorSnackbar.setAction(getResources().getString(R.string.action_retry),
         view -> {
           // Retries to get the user's location and his nearby promos.
@@ -368,7 +369,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         .create();
 
     noNearbyPromosDialog.show(getSupportFragmentManager(),
-                              getResources().getString(R.string.label_we_are_sorry));
+        getResources().getString(R.string.label_we_are_sorry));
   }
 
   /**
@@ -499,7 +500,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         .create();
 
     branchOpeningTimesDialog.show(getSupportFragmentManager(),
-                                  getResources().getString(R.string.label_opening_times));
+        getResources().getString(R.string.label_opening_times));
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -523,16 +524,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-  {
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
     switch (requestCode) {
       case PERMISSION_ACCESS_FINE_LOCATION_CODE: {
         // If the request is cancelled, the result arrays are empty.
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           // The location permission was granted.
           mMapPresenter.locateUser();
-        }
-        else {
+        } else {
           // The location permission was denied.
         }
         break;

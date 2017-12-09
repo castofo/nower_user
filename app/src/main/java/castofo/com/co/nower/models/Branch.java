@@ -28,7 +28,8 @@ public class Branch extends RealmObject {
   private RealmList<ContactInformation> contactInformations;
   private RealmList<Promo> promos;
 
-  public Branch() {}
+  public Branch() {
+  }
 
   public String getId() {
     return id;

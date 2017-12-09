@@ -29,7 +29,8 @@ public class Promo extends RealmObject {
   @LinkingObjects("promos")
   private final RealmResults<Branch> branches = null;
 
-  public Promo() {}
+  public Promo() {
+  }
 
   public String getId() {
     return id;

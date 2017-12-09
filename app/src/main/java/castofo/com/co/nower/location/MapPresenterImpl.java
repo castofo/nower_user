@@ -88,8 +88,7 @@ public class MapPresenterImpl implements MapPresenter,
             if (marker.equals(mMapView.getCurrentMarker())) {
               mMapView.setCurrentMarker(null);
               mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
-            }
-            else {
+            } else {
               mMapView.setCurrentMarker(marker);
               mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
               // A transition from STATE_COLLAPSED to STATE_COLLAPSED doesn't trigger the callback.
@@ -98,8 +97,7 @@ public class MapPresenterImpl implements MapPresenter,
             }
             break;
         }
-      }
-      else {
+      } else {
         // It happens when the user clicked his marker on the map.
         mMapView.setCurrentMarker(null);
         mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
@@ -131,7 +129,7 @@ public class MapPresenterImpl implements MapPresenter,
           mMapView.setBranchContainerState(BottomSheetBehavior.STATE_EXPANDED);
           break;
         case BottomSheetBehavior.STATE_EXPANDED:
-            mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+          mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
           break;
       }
     }
@@ -211,8 +209,7 @@ public class MapPresenterImpl implements MapPresenter,
       mMapView.hideProgress();
       if (isInternetConnectionError(throwable)) {
         mMapView.showNoInternetError();
-      }
-      else {
+      } else {
         mMapView.showGettingNearbyBranchesError();
       }
     }
@@ -232,8 +229,7 @@ public class MapPresenterImpl implements MapPresenter,
       mMarkerList.clear();
       if (nearbyBranchList.isEmpty()) {
         mMapView.showNoNearbyPromosMessage();
-      }
-      else {
+      } else {
         for (Branch branch : nearbyBranchList) {
           LatLng branchPosition = new LatLng(branch.getLatitude(), branch.getLongitude());
           Marker markerForBranch = mMapView.addMarkerForBranch(branchPosition);
@@ -253,8 +249,7 @@ public class MapPresenterImpl implements MapPresenter,
       mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
       if (isInternetConnectionError(throwable)) {
         mMapView.showNoInternetError();
-      }
-      else {
+      } else {
         mMapView.showLoadingBranchError();
       }
     }
@@ -276,8 +271,7 @@ public class MapPresenterImpl implements MapPresenter,
       mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
       if (isInternetConnectionError(throwable)) {
         mMapView.showNoInternetError();
-      }
-      else {
+      } else {
         mMapView.showLoadingBranchPromosError();
       }
     }
@@ -292,8 +286,7 @@ public class MapPresenterImpl implements MapPresenter,
         if (branchPromoList.isEmpty()) {
           // mMapView.showNoBranchPromosMessage(); TODO
           Log.i(TAG, "showNoBranchPromosMessage");
-        }
-        else {
+        } else {
           for (Promo promo : branchPromoList) {
             // mMapView.addPromoToBranch(promo); TODO
             Log.i(TAG, "addPromoToBranch(promo)");

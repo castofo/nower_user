@@ -20,6 +20,6 @@ public interface MapPresenter {
   void manageBranchHeaderInteraction();
 
   void navigateOverBranchList(int direction);
-  
+
   void onDestroy();
 }

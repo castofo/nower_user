@@ -20,7 +20,8 @@ public class ContactInformation extends RealmObject {
   @SerializedName("store_id")
   private String storeId;
 
-  public ContactInformation() {}
+  public ContactInformation() {
+  }
 
   public String getId() {
     return id;

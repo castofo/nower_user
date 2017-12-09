@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
   @OnClick(R.id.btn_login)
   public void onLoginClick() {
     mLoginPresenter.validateCredentials(emailEditText.getText().toString(),
-                                        passwordEditText.getText().toString());
+        passwordEditText.getText().toString());
   }
 
   @Override

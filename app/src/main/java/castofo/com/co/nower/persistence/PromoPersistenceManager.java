@@ -18,7 +18,7 @@ public class PromoPersistenceManager {
   /**
    * Updates the Promo list of the specified Branch and creates the Promos implicitly.
    *
-   * @param branchId The id of the Branch for which the Promos will be updated.
+   * @param branchId        The id of the Branch for which the Promos will be updated.
    * @param branchPromoList The list of Promos of the Branch.
    */
   public static void createBranchPromos(final String branchId, final List<Promo> branchPromoList) {

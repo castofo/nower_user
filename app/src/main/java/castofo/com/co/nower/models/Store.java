@@ -20,7 +20,8 @@ public class Store extends RealmObject {
   private String address;
   private String status;
 
-  public Store() {}
+  public Store() {
+  }
 
   public String getId() {
     return id;

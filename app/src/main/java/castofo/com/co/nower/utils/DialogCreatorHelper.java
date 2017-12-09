@@ -49,6 +49,7 @@ public class DialogCreatorHelper extends DialogFragment {
    */
   public interface Callback extends Serializable {
     void onDialogPositiveBtnClick(DialogFragment dialog, Bundle args);
+
     void onDialogNegativeBtnClick(DialogFragment dialog, Bundle args);
   }
 
@@ -174,7 +175,8 @@ public class DialogCreatorHelper extends DialogFragment {
     super.onDetach();
   }
 
-  @Override public void onDestroyView() {
+  @Override
+  public void onDestroyView() {
     super.onDestroyView();
   }
 }

@@ -25,8 +25,7 @@ public class DateTimeHelper {
     Date convertedDate = null;
     try {
       convertedDate = simpleDateFormat.parse(dateAsString);
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       e.printStackTrace();
     }
     return convertedDate;

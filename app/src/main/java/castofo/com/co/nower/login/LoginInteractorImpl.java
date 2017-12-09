@@ -10,7 +10,8 @@ public class LoginInteractorImpl implements LoginInteractor {
 
   /**
    * Validates if the login information is correct.
-   * @param email String The email of the user
+   *
+   * @param email    String The email of the user
    * @param password String The password of the user
    * @param listener OnLoginFinishedListener The Callback for the result
    */
@@ -20,7 +21,8 @@ public class LoginInteractorImpl implements LoginInteractor {
     // Mocks the login with a non-empty validation. A handler is created to delay the answer for
     // two seconds.
     new Handler().postDelayed(new Runnable() {
-      @Override public void run() {
+      @Override
+      public void run() {
         boolean error = false;
         if (TextUtils.isEmpty(email)) {
           listener.onEmailError();

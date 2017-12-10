@@ -2,6 +2,8 @@ package castofo.com.co.nower.persistence;
 
 import android.util.Log;
 
+import java.util.Date;
+
 import io.realm.DynamicRealm;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
@@ -94,6 +96,38 @@ public class LocalMigrationManager implements RealmMigration {
       RealmObjectSchema promo = schema.get("Promo");
       schema.get("Branch")
           .addRealmListField("promos", promo);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
+
+    // The data type of the start and end dates fields of the Promo model were changed from String
+    // to Date.
+    if (oldVersion == 6) {
+      schema.get("Promo")
+          .removeField("startDate")
+          .removeField("endDate")
+          .addField("startDate", Date.class)
+          .addField("endDate", Date.class);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
+
+    // Making the default contact information of the Branch model optional.
+    if (oldVersion == 7) {
+      schema.get("Branch")
+          .setRequired("defaultContactInfo", false);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
+
+    // Making the default contact information of the Branch model optional.
+    if (oldVersion == 8) {
+      schema.get("Promo")
+          .setRequired("stock", false)
+          .setRequired("price", false);
       oldVersion++;
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");

@@ -22,7 +22,7 @@ public class Branch extends RealmObject {
   private String name;
   private String address;
   @SerializedName("default_contact_info")
-  private boolean defaultContactInfo;
+  private Boolean defaultContactInfo;
   private Store store;
   @SerializedName("contact_informations")
   private RealmList<ContactInformation> contactInformations;
@@ -71,11 +71,11 @@ public class Branch extends RealmObject {
     this.address = address;
   }
 
-  public boolean isDefaultContactInfo() {
+  public Boolean getDefaultContactInfo() {
     return defaultContactInfo;
   }
 
-  public void setDefaultContactInfo(boolean defaultContactInfo) {
+  public void setDefaultContactInfo(Boolean defaultContactInfo) {
     this.defaultContactInfo = defaultContactInfo;
   }
 

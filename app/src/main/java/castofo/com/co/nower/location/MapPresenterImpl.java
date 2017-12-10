@@ -263,6 +263,7 @@ public class MapPresenterImpl implements MapPresenter,
     }
   }
 
+  // TODO hide BottomSheet according to the error and show the respective message.
   @Override
   public void onLoadingBranchPromosError(Throwable throwable) {
     if (mMapView != null) {

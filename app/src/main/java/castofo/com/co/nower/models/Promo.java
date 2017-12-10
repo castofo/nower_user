@@ -2,6 +2,8 @@ package castofo.com.co.nower.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.LinkingObjects;
@@ -20,12 +22,12 @@ public class Promo extends RealmObject {
   private String name;
   private String description;
   private String terms;
-  private int stock;
-  private float price;
+  private Integer stock;
+  private Float price;
   @SerializedName("start_date")
-  private String startDate;
+  private Date startDate;
   @SerializedName("end_date")
-  private String endDate;
+  private Date endDate;
   @LinkingObjects("promos")
   private final RealmResults<Branch> branches = null;
 
@@ -64,35 +66,35 @@ public class Promo extends RealmObject {
     this.terms = terms;
   }
 
-  public int getStock() {
+  public Integer getStock() {
     return stock;
   }
 
-  public void setStock(int stock) {
+  public void setStock(Integer stock) {
     this.stock = stock;
   }
 
-  public float getPrice() {
+  public Float getPrice() {
     return price;
   }
 
-  public void setPrice(float price) {
+  public void setPrice(Float price) {
     this.price = price;
   }
 
-  public String getStartDate() {
+  public Date getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(String startDate) {
+  public void setStartDate(Date startDate) {
     this.startDate = startDate;
   }
 
-  public String getEndDate() {
+  public Date getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(String endDate) {
+  public void setEndDate(Date endDate) {
     this.endDate = endDate;
   }
 }

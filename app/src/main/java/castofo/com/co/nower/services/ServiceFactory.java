@@ -1,10 +1,14 @@
 package castofo.com.co.nower.services;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import castofo.com.co.nower.utils.DateTimeHelper;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -76,11 +80,18 @@ public class ServiceFactory {
     private <T> T createService(final Class<T> serviceClass) {
       return new Retrofit.Builder()
           .baseUrl(mBaseUrl)
-          .addConverterFactory(GsonConverterFactory.create())
+          .addConverterFactory(createGsonConverterFactory())
           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
           .client(createClient())
           .build()
           .create(serviceClass);
+    }
+
+    private GsonConverterFactory createGsonConverterFactory() {
+      Gson gson = new GsonBuilder()
+          .setDateFormat(DateTimeHelper.DATE_FORMAT)
+          .create();
+      return GsonConverterFactory.create(gson);
     }
   }
 }

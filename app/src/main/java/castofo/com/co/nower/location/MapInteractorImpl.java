@@ -329,6 +329,7 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     Single<List<Promo>> remoteBranchPromos = getBranchPromos(branchId)
         .subscribeOn(Schedulers.newThread());
 
+    // TODO execute locally and remotely.
     // Tries to get the Branch Promos from the local db first and, if it was not possible to
     // retrieve them, makes a request to the remote db in order to get the Promos of the specified
     // Branch.
@@ -338,7 +339,7 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         .filter(branchPromoList -> !branchPromoList.isEmpty())
         .firstElement()
         .subscribe(branchPromoList -> {
-          // The loaded Branch Promos are stored locally.
+          // The loaded Branch Promos are updated locally.
           PromoPersistenceManager.createBranchPromos(branchId, branchPromoList);
           listener.onLoadingBranchPromosSuccess(branchId, branchPromoList);
         }, throwable -> listener.onLoadingBranchPromosError(throwable));

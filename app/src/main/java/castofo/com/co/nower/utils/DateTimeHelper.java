@@ -11,14 +11,16 @@ import java.util.Date;
 
 public class DateTimeHelper {
 
+  public final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
   private static Calendar calendar;
   private static SimpleDateFormat simpleDateFormat =
-      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-  private static String date;
+      new SimpleDateFormat(DATE_FORMAT);
 
-  public static void getCurrentTime() {
+  public static Date getCurrentDate() {
     calendar = Calendar.getInstance();
-    date = simpleDateFormat.format(calendar.getTime());
+    String dateAsString = simpleDateFormat.format(calendar.getTime());
+    return getDateFromString(dateAsString);
   }
 
   public static Date getDateFromString(String dateAsString) {
@@ -30,5 +32,4 @@ public class DateTimeHelper {
     }
     return convertedDate;
   }
-
 }

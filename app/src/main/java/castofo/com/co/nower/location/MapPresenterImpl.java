@@ -2,7 +2,6 @@ package castofo.com.co.nower.location;
 
 import android.location.Location;
 import android.support.design.widget.BottomSheetBehavior;
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -258,7 +257,6 @@ public class MapPresenterImpl implements MapPresenter,
   @Override
   public void onLoadingBranchSuccess(Branch loadedBranch) {
     if (mMapView != null) {
-      Log.i(TAG, "Branch name: " + loadedBranch.getName());
       mMapView.populateBranchInfo(loadedBranch);
     }
   }
@@ -285,12 +283,8 @@ public class MapPresenterImpl implements MapPresenter,
         // The user is currently watching the same Branch from which he requested the Promo list.
         if (branchPromoList.isEmpty()) {
           // mMapView.showNoBranchPromosMessage(); TODO
-          Log.i(TAG, "showNoBranchPromosMessage");
         } else {
-          for (Promo promo : branchPromoList) {
-            // mMapView.addPromoToBranch(promo); TODO
-            Log.i(TAG, "addPromoToBranch(promo)");
-          }
+          mMapView.populateBranchPromos(branchPromoList);
         }
         mMapView.hideLoadingBranchPromosProgress();
       }

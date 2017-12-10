@@ -15,6 +15,8 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,14 +39,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import castofo.com.co.nower.R;
 import castofo.com.co.nower.models.Branch;
 import castofo.com.co.nower.models.ContactInformation;
+import castofo.com.co.nower.models.Promo;
 import castofo.com.co.nower.models.Store;
 import castofo.com.co.nower.utils.DialogCreatorHelper;
+import castofo.com.co.nower.views.adapters.BranchPromosAdapter;
 import io.realm.RealmList;
 
 import static castofo.com.co.nower.utils.RequestCodeHelper.ENABLE_GPS_REQUEST_CODE;
@@ -93,6 +100,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   AppCompatTextView tvBranchContactInfoPhone;
   @BindView(R.id.tv_branch_contact_info_email)
   AppCompatTextView tvBranchContactInfoEmail;
+  @BindView(R.id.rv_branch_promos)
+  RecyclerView rvBranchPromos;
   @BindView(R.id.pb_branch_promos_progress)
   ProgressBar pbBranchPromosProgress;
 
@@ -102,6 +111,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   private BottomSheetBehavior mBranchContainer;
   private Marker mCurrentMarker;
   private Branch mCurrentBranch;
+  private BranchPromosAdapter mBranchPromosAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +128,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.map);
     mapFragment.getMapAsync(this);
+
+    setupBranchPromosRecycler();
   }
 
   /**
@@ -485,6 +497,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     pbBranchPromosProgress.setVisibility(View.GONE);
   }
 
+  @Override
+  public void populateBranchPromos(List<Promo> promos) {
+    mBranchPromosAdapter.getPromos().clear();
+    mBranchPromosAdapter.getPromos().addAll(promos);
+    mBranchPromosAdapter.notifyDataSetChanged();
+  }
+
   /**
    * Shows a dialog containing the opening times of the selected Branch.
    */
@@ -501,6 +520,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     branchOpeningTimesDialog.show(getSupportFragmentManager(),
         getResources().getString(R.string.label_opening_times));
+  }
+
+  private void setupBranchPromosRecycler() {
+    rvBranchPromos.setLayoutManager(new LinearLayoutManager(this));
+
+    mBranchPromosAdapter = new BranchPromosAdapter(new ArrayList<>(), promo -> {
+      onPromoClick(promo);
+      return null;
+    });
+    rvBranchPromos.setAdapter(mBranchPromosAdapter);
+  }
+
+  private void onPromoClick(Promo promo) {
+    // TODO: Implement transition to promo details.
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {

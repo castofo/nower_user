@@ -5,7 +5,10 @@ import android.app.Activity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.List;
+
 import castofo.com.co.nower.models.Branch;
+import castofo.com.co.nower.models.Promo;
 
 /**
  * Created by Alejandro on 19/09/2016.
@@ -67,4 +70,6 @@ public interface MapView {
   void showLoadingBranchPromosError();
 
   void hideLoadingBranchPromosProgress();
+
+  void populateBranchPromos(List<Promo> promos);
 }

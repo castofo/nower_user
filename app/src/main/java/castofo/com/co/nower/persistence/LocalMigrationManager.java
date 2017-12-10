@@ -98,5 +98,15 @@ public class LocalMigrationManager implements RealmMigration {
       Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
           + ".");
     }
+
+    // Stock and price in Promo are now optional, so that they can support null values.
+    if (oldVersion == 6) {
+      schema.get("Promo")
+          .setRequired("stock", false)
+          .setRequired("price", false);
+      oldVersion++;
+      Log.i(TAG, "DB migrated from version " + (oldVersion - 1) + " to version " + oldVersion
+          + ".");
+    }
   }
 }

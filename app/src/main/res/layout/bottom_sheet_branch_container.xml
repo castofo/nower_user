@@ -252,6 +252,7 @@
             android:id="@+id/rv_branch_promos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="@dimen/global_spacing_8"
             android:scrollbars="vertical"
             tools:listitem="@layout/promo_item"/>
 

@@ -3,6 +3,19 @@
   <!-- Default screen margins, per the Android Design guidelines. -->
   <dimen name="activity_horizontal_margin">16dp</dimen>
   <dimen name="activity_vertical_margin">16dp</dimen>
+
+  <!-- Common and standard material metrics -->
+  <dimen name="global_spacing_4">4dp</dimen>
+  <dimen name="global_spacing_8">8dp</dimen>
+  <dimen name="global_spacing_12">12dp</dimen>
+  <dimen name="global_spacing_16">16dp</dimen>
+  <dimen name="global_spacing_24">24dp</dimen>
+
+  <!-- Common and standard material text sizes -->
+  <dimen name="global_text_14">14sp</dimen>
+  <dimen name="global_text_16">16sp</dimen>
+  <dimen name="global_text_24">24sp</dimen>
+
   <dimen name="edit_text_drawable_padding">8dp</dimen>
   <dimen name="bottom_sheet_peek_height">80dp</dimen>
   <dimen name="navigation_controls_width">48dp</dimen>
@@ -11,4 +24,5 @@
   <dimen name="branch_description_vertical_padding">10dp</dimen>
   <dimen name="branch_contact_info_item_padding">5dp</dimen>
   <dimen name="branch_contact_info_drawable_padding">8dp</dimen>
+  <dimen name="promo_item_image_height">150dp</dimen>
 </resources>

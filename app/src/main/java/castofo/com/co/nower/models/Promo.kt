@@ -18,8 +18,8 @@ open class Promo(
         var name: String? = null,
         var description: String? = null,
         var terms: String? = null,
-        var stock: Int = 0,
-        var price: Float = 0.toFloat(),
+        var stock: Int? = null,
+        var price: Float? = null,
         @SerializedName("start_date")
         var startDate: String? = null,
         @SerializedName("end_date")

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import butterknife.ButterKnife
 import castofo.com.co.nower.R
 import castofo.com.co.nower.models.Promo
 
@@ -29,7 +30,9 @@ class BranchPromosAdapter(val promos: List<Promo>, private val listener: (Promo)
             RecyclerView.ViewHolder(view) {
 
         fun bind(promo: Promo) = with(promo) {
-            (itemView.findViewById(R.id.promo_title) as TextView).text = name
+            ButterKnife.findById<TextView>(itemView, R.id.promo_title).text = name
+            ButterKnife.findById<TextView>(itemView, R.id.promo_subtitle).text = stock?.toString()
+            ButterKnife.findById<TextView>(itemView, R.id.promo_description).text = description
             itemView.setOnClickListener { listener(this) }
         }
     }

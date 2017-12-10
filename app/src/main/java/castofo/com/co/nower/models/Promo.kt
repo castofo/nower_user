@@ -25,5 +25,5 @@ open class Promo(
         @SerializedName("end_date")
         var endDate: String? = null,
         @LinkingObjects("promos")
-        private val branches: RealmResults<Branch>? = null
+        val branches: RealmResults<Branch>? = null
 ) : RealmObject()

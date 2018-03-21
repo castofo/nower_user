@@ -135,6 +135,27 @@ public class MapPresenterImpl implements MapPresenter,
     }
   }
 
+  /**
+   * Collapses or hides the Branch container according to the interaction with the HW back arrow.
+   */
+  @Override
+  public void manageBranchHeaderInteractionForHWBackArrow() {
+    if (mMapView != null) {
+      switch (mMapView.getBranchContainerState()) {
+        case BottomSheetBehavior.STATE_COLLAPSED:
+          mMapView.setBranchContainerState(BottomSheetBehavior.STATE_HIDDEN);
+          break;
+        case BottomSheetBehavior.STATE_EXPANDED:
+          mMapView.setBranchContainerState(BottomSheetBehavior.STATE_COLLAPSED);
+          break;
+        default:
+          // The HW back arrow was pressed but it is not related with the Branch container
+          // interaction.
+          mMapView.finishActivity();
+      }
+    }
+  }
+
   @Override
   public void navigateOverBranchList(int direction) {
     if (mMapView != null) {
@@ -263,7 +284,6 @@ public class MapPresenterImpl implements MapPresenter,
     }
   }
 
-  // TODO hide BottomSheet according to the error and show the respective message.
   @Override
   public void onLoadingBranchPromosError(Throwable throwable) {
     if (mMapView != null) {

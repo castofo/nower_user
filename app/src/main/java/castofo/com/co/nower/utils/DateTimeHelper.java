@@ -1,8 +1,8 @@
 package castofo.com.co.nower.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.Date;
 
 /**
@@ -11,25 +11,11 @@ import java.util.Date;
 
 public class DateTimeHelper {
 
-  public final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
-  private static Calendar calendar;
-  private static SimpleDateFormat simpleDateFormat =
-      new SimpleDateFormat(DATE_FORMAT);
+  public final static String DATE_FORMAT_UTC = "yyyy-MM-dd'T'HH:mm:ssZ";
 
   public static Date getCurrentDate() {
-    calendar = Calendar.getInstance();
-    String dateAsString = simpleDateFormat.format(calendar.getTime());
-    return getDateFromString(dateAsString);
-  }
-
-  public static Date getDateFromString(String dateAsString) {
-    Date convertedDate = null;
-    try {
-      convertedDate = simpleDateFormat.parse(dateAsString);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return convertedDate;
+    DateTime currentDateTime = DateTime.now(DateTimeZone.getDefault());
+    Date currentDate = currentDateTime.toLocalDateTime().toDate();
+    return currentDate;
   }
 }

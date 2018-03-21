@@ -89,7 +89,7 @@ public class ServiceFactory {
 
     private GsonConverterFactory createGsonConverterFactory() {
       Gson gson = new GsonBuilder()
-          .setDateFormat(DateTimeHelper.DATE_FORMAT)
+          .setDateFormat(DateTimeHelper.DATE_FORMAT_UTC)
           .create();
       return GsonConverterFactory.create(gson);
     }

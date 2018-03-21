@@ -19,6 +19,8 @@ public interface MapPresenter {
 
   void manageBranchHeaderInteraction();
 
+  void manageBranchHeaderInteractionForHWBackArrow();
+
   void navigateOverBranchList(int direction);
 
   void onDestroy();

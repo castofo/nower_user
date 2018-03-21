@@ -33,7 +33,9 @@ import castofo.com.co.nower.models.Branch;
 import castofo.com.co.nower.models.Promo;
 import castofo.com.co.nower.network.ConnectivityInterceptor;
 import castofo.com.co.nower.persistence.BranchPersistenceManager;
+import castofo.com.co.nower.persistence.ContactInformationPersistenceManager;
 import castofo.com.co.nower.persistence.PromoPersistenceManager;
+import castofo.com.co.nower.persistence.StorePersistenceManager;
 import castofo.com.co.nower.services.MapService;
 import castofo.com.co.nower.services.ServiceFactory;
 import castofo.com.co.nower.utils.RequestCodeHelper;
@@ -279,9 +281,13 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
         .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
         .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(nearbyBranchList -> {
-          // Deletes all previously stored Branches.
+          // Deletes all previously stored Branches, Stores, ContactInformations and Promos.
           BranchPersistenceManager.deleteAllBranches();
-          // The downloaded Branches and their corresponding Stores are stored locally.
+          StorePersistenceManager.deleteAllStores();
+          ContactInformationPersistenceManager.deleteAllContactInformations();
+          PromoPersistenceManager.deleteAllPromos();
+          // The downloaded Branches, their corresponding Stores and ContactInformations are stored
+          // locally.
           BranchPersistenceManager.createBranchesInList(nearbyBranchList);
           listener.onGettingNearbyBranchesSuccess(nearbyBranchList);
         }, throwable -> {
@@ -317,41 +323,36 @@ public class MapInteractorImpl implements MapInteractor, GoogleApiClient.Connect
     // The "store" and "contact_informations" parameters are used to include the corresponding
     // Store and ContactInformation in the Branch.
     return mMapService.getBranch(branchId, "store,contact_informations")
-        // The downloaded Branch and its corresponding Store are stored locally.
+        // The downloaded Branch and its corresponding Store and ContactInformation are stored
+        // locally.
         .doOnSuccess(branch -> BranchPersistenceManager.createBranch(branch));
   }
 
   @Override
   public void loadBranchPromos(String branchId, OnBranchPromosLoadedListener listener) {
-    Single<List<Promo>> cachedBranchPromos = PromoPersistenceManager.retrieveBranchPromos(branchId)
-        .subscribeOn(Schedulers.io());
-
-    Single<List<Promo>> remoteBranchPromos = getBranchPromos(branchId)
-        .subscribeOn(Schedulers.newThread());
-
-    // TODO execute locally and remotely.
-    // Tries to get the Branch Promos from the local db first and, if it was not possible to
-    // retrieve them, makes a request to the remote db in order to get the Promos of the specified
-    // Branch.
-    Single.concat(cachedBranchPromos, remoteBranchPromos)
-        .observeOn(AndroidSchedulers.mainThread())
-        // It is satisfied with the first result in which the Branch Promo list is not empty.
-        .filter(branchPromoList -> !branchPromoList.isEmpty())
-        .firstElement()
+    // Tries to request the Branch Promos from the remote db first and, if it was not possible,
+    // retrieves the data from the local db in order to get the Promos of the specified Branch.
+    mMapService.getBranchPromos(branchId)
+        .subscribeOn(Schedulers.newThread()) // TODO improve with the better way.
+        .observeOn(AndroidSchedulers.mainThread()) // TODO improve with the better way.
         .subscribe(branchPromoList -> {
+          // Deletes all previously stored Branch Promos.
+          PromoPersistenceManager.deleteBranchPromos(branchId);
+          // The downloaded Branch Promos are stored locally.
+          PromoPersistenceManager.createPromosInList(branchPromoList);
           // The loaded Branch Promos are updated locally.
-          PromoPersistenceManager.createBranchPromos(branchId, branchPromoList);
+          PromoPersistenceManager.updateBranchPromos(branchId, branchPromoList);
           listener.onLoadingBranchPromosSuccess(branchId, branchPromoList);
-        }, throwable -> listener.onLoadingBranchPromosError(throwable));
-  }
-
-  /**
-   * Retrieves the Branch Promos from the remote db for the given id.
-   *
-   * @param branchId The id of the Branch for which the Promos will be retrieved.
-   * @return A {@link Single<List<Promo>>} that will emit the result.
-   */
-  private Single<List<Promo>> getBranchPromos(String branchId) {
-    return mMapService.getBranchPromos(branchId);
+        }, throwable -> {
+          List<Promo> cachedBranchPromos = PromoPersistenceManager.retrieveBranchPromos(branchId);
+          if (cachedBranchPromos != null) {
+            listener.onLoadingBranchPromosSuccess(branchId, cachedBranchPromos);
+          }
+          else {
+            // The Branch Promos couldn't be retrieved neither from the Internet nor from the local
+            // db.
+            listener.onLoadingBranchPromosError(new Throwable());
+          }
+        });
   }
 }

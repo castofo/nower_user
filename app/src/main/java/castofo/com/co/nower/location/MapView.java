@@ -67,4 +67,6 @@ public interface MapView {
   void showLoadingBranchPromosError();
 
   void hideLoadingBranchPromosProgress();
+
+  void finishActivity();
 }

@@ -485,6 +485,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     pbBranchPromosProgress.setVisibility(View.GONE);
   }
 
+  @Override
+  public void finishActivity() {
+    finish();
+  }
+
   /**
    * Shows a dialog containing the opening times of the selected Branch.
    */
@@ -554,5 +559,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         break;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  /**
+   * It is triggered when the HW back button is pressed.
+   */
+  @Override
+  public void onBackPressed() {
+    mMapPresenter.manageBranchHeaderInteractionForHWBackArrow();
   }
 }
